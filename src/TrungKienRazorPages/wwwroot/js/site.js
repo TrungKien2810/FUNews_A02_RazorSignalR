@@ -33,11 +33,16 @@
     }
 
     window.openModal = function (url) {
+        // Shown before the request lands: a dialog that stays blank for 400ms reads as broken.
+        render('<div class="modal-header"><h2 class="modal-title h5 mb-0" id="appModalTitle">Loading&hellip;</h2>' +
+            '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close dialog"></button></div>' +
+            '<div class="modal-body"><p class="text-muted mb-0" role="status">Opening the record&hellip;</p></div>');
+        modal.show();
+
         $.get(url)
-            .done(function (html) { render(html); modal.show(); })
+            .done(function (html) { render(html); })
             .fail(function (xhr) {
                 showError(xhr.status === 404 ? 'The item does not exist (it may have been deleted).' : 'Cannot load data (' + xhr.status + ').');
-                modal.show();
             });
     };
 

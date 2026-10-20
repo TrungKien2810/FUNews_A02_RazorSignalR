@@ -11,6 +11,7 @@
     ViewData["Description"] = string.IsNullOrWhiteSpace(article.Headline) ? article.NewsTitle : article.Headline;
     ViewData["OgType"] = "article";
 }
+<div class="article-column">
 <nav aria-label="Breadcrumb">
     <ol class="breadcrumb mt-4 mb-0">
         <li class="breadcrumb-item"><a asp-page="/News/Index">News</a></li>
@@ -40,11 +41,14 @@
                 <time datetime="@published.Value.ToString("o")">@published.Value.ToString(isFresh ? "dd MMMM yyyy, HH:mm" : "dd MMMM yyyy")</time>
             }
             <span>@ReadTime.Minutes(article.NewsContent) min read</span>
-            @if (article.ModifiedDate.HasValue)
+            @if (article.ModifiedDate.HasValue && article.ModifiedDate != published)
             {
                 <span>Updated <time datetime="@article.ModifiedDate.Value.ToString("o")">@article.ModifiedDate.Value.ToString("dd MMMM yyyy, HH:mm")</time></span>
             }
-            <span>Source: <strong>@(string.IsNullOrEmpty(article.NewsSource) ? "not stated" : article.NewsSource)</strong></span>
+            @if (!string.IsNullOrWhiteSpace(article.NewsSource) && !article.NewsSource.Equals("N/A", StringComparison.OrdinalIgnoreCase))
+            {
+                <span>Source: <strong>@article.NewsSource</strong></span>
+            }
         </div>
     </header>
 
@@ -85,4 +89,5 @@
 <div class="d-flex gap-2 pb-5 pt-4 flex-wrap">
     <a asp-page="/News/Index" class="btn btn-outline-secondary">&larr; Back to news</a>
     <a href="#top" class="btn btn-link">Back to top</a>
+</div>
 </div>

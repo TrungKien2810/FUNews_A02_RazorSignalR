@@ -88,7 +88,7 @@ else
                         </div>
                         <div class="story-list__meta">
                             <span class="story-list__cat">@n.Category?.CategoryName</span>
-                            <time class="story-list__date" datetime="@n.CreatedDate?.ToString("yyyy-MM-dd")">@n.CreatedDate?.ToString("dd/MM/yyyy")</time>
+                            <time class="story-list__date" datetime="@n.CreatedDate?.ToString("yyyy-MM-dd")">@n.CreatedDate?.ToString("dd MMM yyyy")</time>
                         </div>
                     </a>
                 </li>
@@ -96,7 +96,9 @@ else
         </ul>
     }
 
-    <p class="result-count">
+    @* Announced when SignalR replaces this block, so a screen-reader user hears that the
+       list changed under them instead of silently losing their place. *@
+    <p class="result-count" role="status" aria-live="polite">
         @Model.Count article@(Model.Count == 1 ? string.Empty : "s")
         @(isFiltered ? "match these filters" : "in the newsroom")
     </p>

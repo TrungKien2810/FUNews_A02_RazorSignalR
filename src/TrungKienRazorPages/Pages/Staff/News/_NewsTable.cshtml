@@ -82,5 +82,5 @@ else
             </tbody>
         </table>
     </div>
-    <p class="result-count">@Model.Count article@(Model.Count == 1 ? string.Empty : "s")</p>
+    <p class="result-count" role="status" aria-live="polite">@Model.Count article@(Model.Count == 1 ? string.Empty : "s")</p>
 }

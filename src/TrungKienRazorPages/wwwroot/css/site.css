@@ -1147,6 +1147,15 @@ hr {
    Article detail — editorial measure
    ===================================================================== */
 
+/* One reading column, centred: the head, the prose, the tags and the "read next" block
+   share the same measure, the way a printed page does. Without it the headline runs to
+   the full shell width while the body stops at 68ch, and the eye has to re-find the
+   left edge on every element. */
+.article-column {
+  max-width: 43rem;
+  margin-inline: auto;
+}
+
 .article-head { padding: var(--s-6) 0 var(--s-4); border-bottom: 1px solid var(--border); }
 .article-head__title {
   font-family: var(--font-display);
