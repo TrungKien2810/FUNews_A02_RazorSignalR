@@ -96,7 +96,13 @@ On the public side, the news list and an article page were re-checked in an auto
 pass at 375 / 768 / 1440px: no horizontal overflow and no console errors, and `/feed.rss`
 answers `application/rss+xml` with the active stories. Below 768px the staff news ledger
 reflows into labelled records with full-width View / Edit / Delete buttons instead of scrolling
-sideways.
+sideways, and the app bar collapses behind one menu button.
+
+Both themes were scanned with axe: light and `prefers-color-scheme: dark` report no violations
+on the news list, an article page and the staff ledger, and a dark-mode screenshot confirms the
+page actually repaints. Served responses carry `Content-Encoding: br`, a one-week cache on
+static assets, `X-Content-Type-Options`, `Referrer-Policy` and `X-Frame-Options`; an unknown
+address answers **404** with a written explanation rather than a blank page.
 
 **Not verified.** No real screen reader, no cross-browser or real-device testing, no automated
 visual-regression baseline, and no load testing. The two "control under 24px" findings are the
