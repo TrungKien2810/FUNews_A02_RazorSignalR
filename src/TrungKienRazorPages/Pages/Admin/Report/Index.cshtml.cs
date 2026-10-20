@@ -20,6 +20,9 @@ public class IndexModel : PageModel
 
     public NewsReport? Report { get; set; }
 
+    /// <summary>Article count for the same-length window before the reported period.</summary>
+    public int? PreviousTotal { get; private set; }
+
     public void OnGet()
     {
         if (!Filter.StartDate.HasValue && !Filter.EndDate.HasValue)
@@ -34,6 +37,7 @@ public class IndexModel : PageModel
         if (ModelState.IsValid)
         {
             Report = _newsRepository.GetReport(Filter.StartDate!.Value, Filter.EndDate!.Value);
+            PreviousTotal = CountPreviousPeriod(Filter.StartDate.Value, Filter.EndDate.Value);
         }
     }
 
@@ -44,6 +48,23 @@ public class IndexModel : PageModel
         {
             return BadRequest();
         }
-        return Partial("_ReportResults", _newsRepository.GetReport(Filter.StartDate.Value, Filter.EndDate.Value));
+
+        return Partial("_ReportResults", new ReportResultsViewModel
+        {
+            Report = _newsRepository.GetReport(Filter.StartDate.Value, Filter.EndDate.Value),
+            PreviousTotal = CountPreviousPeriod(Filter.StartDate.Value, Filter.EndDate.Value)
+        });
+    }
+
+    /// <summary>
+    /// Counts the same-length window immediately before the reported one, so the total can
+    /// be read as more or fewer than usual rather than as a bare number.
+    /// </summary>
+    private int CountPreviousPeriod(DateTime start, DateTime end)
+    {
+        var length = (end.Date - start.Date).Days + 1;
+        var previousEnd = start.Date.AddDays(-1);
+        var previousStart = previousEnd.AddDays(-(length - 1));
+        return _newsRepository.CountNewsArticlesByPeriod(previousStart, previousEnd);
     }
 }

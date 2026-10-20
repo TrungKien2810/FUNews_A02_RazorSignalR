@@ -1,6 +1,7 @@
-@model NewsReport
+@model ReportResultsViewModel
 @{
-    var report = Model;
+    var report = Model.Report;
+    var trend = Model.Trend;
 }
 <p class="report-window">
     News created from <strong>@report.StartDate.ToString("dd/MM/yyyy")</strong> to <strong>@report.EndDate.ToString("dd/MM/yyyy")</strong>,
@@ -12,6 +13,15 @@
     <div class="stat stat--total">
         <span class="stat__label">Total news</span>
         <span class="stat__value">@report.Total</span>
+        @if (trend is int delta)
+        {
+            <span class="stat__trend @(delta > 0 ? "stat__trend--up" : delta < 0 ? "stat__trend--down" : "")">
+                @(delta > 0 ? "▲" : delta < 0 ? "▼" : "■")
+                @(delta == 0
+                    ? "Same as the previous period"
+                    : $"{Math.Abs(delta)} {(Math.Abs(delta) == 1 ? "story" : "stories")} {(delta > 0 ? "more" : "fewer")} than the period before")
+            </span>
+        }
     </div>
     <div class="stat stat--active">
         <span class="stat__label">Active</span>

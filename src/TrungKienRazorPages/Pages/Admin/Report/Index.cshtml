@@ -33,6 +33,6 @@
 @if (Model.Report != null)
 {
     <div id="report-results" data-realtime-url="@Url.Page("/Admin/Report/Index", "Results")">
-        <partial name="_ReportResults" model="Model.Report" />
+        <partial name="_ReportResults" model="new ReportResultsViewModel { Report = Model.Report, PreviousTotal = Model.PreviousTotal }" />
     </div>
 }

@@ -694,6 +694,23 @@ hr {
   color: var(--brand-700);
   font-variant-numeric: tabular-nums;
 }
+
+/* A sentence, not a badge: "▲ 2" alone makes the reader decode the arrow before they
+   learn what it is being compared against. */
+.stat__trend {
+  display: block;
+  margin-top: var(--s-2);
+  color: var(--text-muted);
+  font-size: var(--t-xs);
+}
+
+.stat__trend--up {
+  color: var(--success);
+}
+
+.stat__trend--down {
+  color: var(--danger);
+}
 .report-window {
   color: var(--text-muted);
   font-size: var(--t-base);

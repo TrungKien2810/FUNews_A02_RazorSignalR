@@ -9,6 +9,7 @@ public class NewsArticleRepository : INewsArticleRepository
         => NewsArticleDAO.Instance.SearchNewsArticles(keyword, categoryId, status, createdById, tagId);
     public NewsArticle? GetNewsArticleById(string id) => NewsArticleDAO.Instance.GetNewsArticleById(id);
     public List<NewsArticle> GetNewsArticlesByPeriod(DateTime startDate, DateTime endDate) => NewsArticleDAO.Instance.GetNewsArticlesByPeriod(startDate, endDate);
+    public int CountNewsArticlesByPeriod(DateTime startDate, DateTime endDate) => NewsArticleDAO.Instance.CountNewsArticlesByPeriod(startDate, endDate);
     public List<NewsArticle> GetRelatedArticles(string articleId, short? categoryId, IReadOnlyCollection<int> tagIds, int take)
         => NewsArticleDAO.Instance.GetRelatedArticles(articleId, categoryId, tagIds, take);
 
