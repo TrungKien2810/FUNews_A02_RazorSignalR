@@ -254,6 +254,67 @@ hr {
   flex-wrap: wrap;
 }
 
+/* The menu button exists only below the width where the nav fits on one line. With
+   scripting off it stays hidden and the nav is the wrapped list it always was. */
+.nav-toggle {
+  display: none;
+  align-items: center;
+  gap: var(--s-2);
+  margin-left: auto;
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid rgb(255 255 255 / 0.45);
+  border-radius: var(--r-control);
+  background: transparent;
+  color: var(--text-on-brand);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nav-toggle__bars {
+  width: 1rem;
+  height: 2px;
+  background: currentColor;
+  box-shadow: 0 -5px 0 currentColor, 0 5px 0 currentColor;
+}
+
+@media (max-width: 61.99rem) {
+  html.js .nav-toggle {
+    display: inline-flex;
+  }
+
+  html.js .app-nav {
+    display: none;
+  }
+
+  /* Open: a column of full-width rows, which is what a thumb can hit. */
+  html.js .app-nav[data-nav-open="true"] {
+    display: flex;
+    flex: 1 1 100%;
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: var(--s-3);
+  }
+
+  html.js .app-nav[data-nav-open="true"] .app-nav__link {
+    padding-block: var(--s-3);
+    border-bottom: 1px solid rgb(255 255 255 / 0.14);
+  }
+}
+
+/* Below 480px the wordmark subtitle is what pushes the menu button onto its own row,
+   which costs a whole line of header on the smallest screen. The name still says
+   FUNews; the subtitle is the first thing a phone can do without. */
+@media (max-width: 29.99rem) {
+  .brand__sub {
+    display: none;
+  }
+
+  .app-bar__inner {
+    min-height: 0;
+  }
+}
+
 .app-nav__link {
   display: inline-block;
   padding: var(--s-2) var(--s-3);

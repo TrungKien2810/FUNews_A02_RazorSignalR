@@ -15,6 +15,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] &middot; FUNews</title>
+    @* Script-capable marker before first paint: the menu button and the collapsed nav
+       appear together instead of the nav flashing open and then closing. *@
+    <script>document.documentElement.classList.add('js');</script>
     @{
         // Shared pages describe themselves; desk pages inherit the newsroom summary
         // because they sit behind a login and are never meant to be linked to.
@@ -45,7 +48,12 @@
                 <span class="brand__sub">Campus newsroom</span>
             </a>
 
-            <nav class="app-nav" aria-label="Main">
+            <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+                <span class="nav-toggle__bars" aria-hidden="true"></span>
+                <span>Menu</span>
+            </button>
+
+            <nav id="site-nav" class="app-nav" aria-label="Main">
                 <a class="@NavClass("/News")" asp-page="/News/Index">News</a>
                 @if (User.IsInRole(AccountRoles.AdminName))
                 {

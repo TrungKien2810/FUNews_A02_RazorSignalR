@@ -154,3 +154,30 @@
 
     window.newsHubConnection = connection;
 })();
+
+/* Mobile menu
+   ---------------------------------------------------------------------------
+   Below 62rem the nav collapses behind one button so the app bar is a single row.
+   The button owns `aria-expanded`; the nav is still a real <nav> and, with
+   scripting off, it stays visible as the wrapped list it always was. */
+(function () {
+    const toggle = document.querySelector('[data-nav-toggle]');
+    const nav = document.getElementById('site-nav');
+    if (!toggle || !nav) return;
+
+    function setOpen(open) {
+        toggle.setAttribute('aria-expanded', String(open));
+        nav.setAttribute('data-nav-open', String(open));
+    }
+
+    toggle.addEventListener('click', function () {
+        setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+            setOpen(false);
+            toggle.focus();
+        }
+    });
+})();
