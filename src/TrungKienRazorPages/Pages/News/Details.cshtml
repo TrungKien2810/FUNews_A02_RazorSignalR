@@ -1,12 +1,20 @@
 @page "{id}"
 @model TrungKienRazorPages.Pages.News.DetailsModel
+@using TrungKienRazorPages.Infrastructure
 @{
-    ViewData["Title"] = Model.Article.NewsTitle;
+    var article = Model.Article;
+    var categoryName = article.Category?.CategoryName ?? "Uncategorised";
+    var published = article.CreatedDate;
+    var isFresh = published.HasValue && (DateTime.Now - published.Value).TotalDays <= 7;
+
+    ViewData["Title"] = article.NewsTitle;
+    ViewData["Description"] = string.IsNullOrWhiteSpace(article.Headline) ? article.NewsTitle : article.Headline;
+    ViewData["OgType"] = "article";
 }
 <nav aria-label="Breadcrumb">
     <ol class="breadcrumb mt-4 mb-0">
         <li class="breadcrumb-item"><a asp-page="/News/Index">News</a></li>
-        <li class="breadcrumb-item active" aria-current="page">@(Model.Article.Category?.CategoryName ?? "Uncategorised")</li>
+        <li class="breadcrumb-item active" aria-current="page">@categoryName</li>
     </ol>
 </nav>
 
@@ -14,43 +22,67 @@
     This article was deleted by a colleague while you were reading it.
 </div>
 
-<article data-news-id="@Model.Article.NewsArticleId">
+<article data-news-id="@article.NewsArticleId">
     <header class="article-head">
         <p class="eyebrow mb-1">
-            @Model.Article.Category?.CategoryName
-            @if (Model.Article.NewsStatus == false)
+            @categoryName
+            @if (article.NewsStatus == false)
             {
                 <span class="badge badge-status--draft ms-2">Draft</span>
             }
         </p>
-        <h1 class="article-head__title">@Model.Article.NewsTitle</h1>
-        <p class="article-head__standfirst">@Model.Article.Headline</p>
+        <h1 class="article-head__title">@article.NewsTitle</h1>
+        <p class="article-head__standfirst">@article.Headline</p>
         <div class="article-meta">
-            <span>By <strong>@(Model.Article.CreatedBy?.AccountName ?? "Unknown")</strong></span>
-            <span>
-                <time datetime="@Model.Article.CreatedDate?.ToString("yyyy-MM-dd")">@Model.Article.CreatedDate?.ToString("dd MMMM yyyy, HH:mm")</time>
-            </span>
-            @if (Model.Article.ModifiedDate.HasValue)
+            <span>By <strong>@(article.CreatedBy?.AccountName ?? "Unknown")</strong></span>
+            @if (published.HasValue)
             {
-                <span>Updated <time datetime="@Model.Article.ModifiedDate.Value.ToString("yyyy-MM-dd")">@Model.Article.ModifiedDate.Value.ToString("dd MMMM yyyy, HH:mm")</time></span>
+                <time datetime="@published.Value.ToString("o")">@published.Value.ToString(isFresh ? "dd MMMM yyyy, HH:mm" : "dd MMMM yyyy")</time>
             }
-            <span>Source: <strong>@(string.IsNullOrEmpty(Model.Article.NewsSource) ? "not stated" : Model.Article.NewsSource)</strong></span>
+            <span>@ReadTime.Minutes(article.NewsContent) min read</span>
+            @if (article.ModifiedDate.HasValue)
+            {
+                <span>Updated <time datetime="@article.ModifiedDate.Value.ToString("o")">@article.ModifiedDate.Value.ToString("dd MMMM yyyy, HH:mm")</time></span>
+            }
+            <span>Source: <strong>@(string.IsNullOrEmpty(article.NewsSource) ? "not stated" : article.NewsSource)</strong></span>
         </div>
     </header>
 
-    <div class="article-body news-content">@Model.Article.NewsContent</div>
+    <div class="article-body news-content">@article.NewsContent</div>
 
-    @if (Model.Article.Tags.Any())
+    @if (article.Tags.Any())
     {
         <div class="tag-list mb-4">
-            @foreach (var t in Model.Article.Tags)
+            @foreach (var tag in article.Tags)
             {
-                <span class="tag">@t.TagName</span>
+                <a class="tag" asp-page="/News/Index" asp-route-tagId="@tag.TagId">@tag.TagName</a>
             }
         </div>
     }
 </article>
 
-<div class="d-flex gap-2 pb-5 flex-wrap">
+@if (Model.Related.Any())
+{
+    <section class="related" aria-labelledby="related-title">
+        <h2 class="related__title" id="related-title">More from @categoryName</h2>
+        <ul class="related__list">
+            @foreach (var story in Model.Related)
+            {
+                <li class="related__item">
+                    <a class="related__link" asp-page="/News/Details" asp-route-id="@story.NewsArticleId">@story.NewsTitle</a>
+                    <p class="related__meta">
+                        <time datetime="@story.CreatedDate?.ToString("yyyy-MM-dd")">@story.CreatedDate?.ToString("dd MMM yyyy")</time>
+                        <span aria-hidden="true">·</span>
+                        <span>@ReadTime.Minutes(story.NewsContent) min read</span>
+                    </p>
+                </li>
+            }
+        </ul>
+        <a class="related__more" asp-page="/News/Index" asp-route-categoryId="@article.CategoryId">See every story in @categoryName</a>
+    </section>
+}
+
+<div class="d-flex gap-2 pb-5 pt-4 flex-wrap">
     <a asp-page="/News/Index" class="btn btn-outline-secondary">&larr; Back to news</a>
+    <a href="#top" class="btn btn-link">Back to top</a>
 </div>

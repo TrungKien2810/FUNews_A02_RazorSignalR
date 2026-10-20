@@ -81,6 +81,28 @@ public class NewsArticleDAO
             .ToList();
     }
 
+    /// <summary>
+    /// Active stories in the same section, best match first: more shared tags, then
+    /// newest. Same section only, so the heading "More from &lt;category&gt;" is literally
+    /// true; shared tags decide the order inside it. With no category to go on, tags are
+    /// all there is. Drives "More from this section" on the public article page.
+    /// </summary>
+    public List<NewsArticle> GetRelatedArticles(string articleId, short? categoryId, IReadOnlyCollection<int> tagIds, int take)
+    {
+        var ids = tagIds.Distinct().ToList();
+        using var db = new FUNewsManagementContext();
+        var query = QueryWithDetails(db).Where(n => n.NewsStatus == true && n.NewsArticleId != articleId);
+        query = categoryId.HasValue
+            ? query.Where(n => n.CategoryId == categoryId.Value)
+            : query.Where(n => n.Tags.Any(t => ids.Contains(t.TagId)));
+
+        return query.OrderByDescending(n => n.CreatedDate).ToList()
+            .OrderByDescending(n => n.Tags.Count(t => ids.Contains(t.TagId)))
+            .ThenByDescending(n => n.CreatedDate)
+            .Take(take)
+            .ToList();
+    }
+
     public void AddNewsArticle(NewsArticle article, IEnumerable<int> tagIds)
     {
         using var db = new FUNewsManagementContext();

@@ -18,6 +18,9 @@ public class DetailsModel : PageModel
 
     public NewsArticle Article { get; set; } = null!;
 
+    /// <summary>What to read next: same section first, then shared tags. Never the article itself.</summary>
+    public List<NewsArticle> Related { get; set; } = new();
+
     public IActionResult OnGet(string id)
     {
         var article = _newsRepository.GetNewsArticleById(id);
@@ -26,6 +29,11 @@ public class DetailsModel : PageModel
             return NotFound();
         }
         Article = article;
+        Related = _newsRepository.GetRelatedArticles(
+            article.NewsArticleId,
+            article.CategoryId,
+            article.Tags.Select(t => t.TagId).ToList(),
+            3);
         return Page();
     }
 }

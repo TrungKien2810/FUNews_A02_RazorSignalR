@@ -92,6 +92,12 @@ returns server-side validation into the open popup (4 field errors, modal stays 
 clean), the report populated with a real date range, and the news list at 375 / 768 / 1440px.
 Console is free of errors and warnings throughout.
 
+On the public side, the news list and an article page were re-checked in an automated browser
+pass at 375 / 768 / 1440px: no horizontal overflow and no console errors, and `/feed.rss`
+answers `application/rss+xml` with the active stories. Below 768px the staff news ledger
+reflows into labelled records with full-width View / Edit / Delete buttons instead of scrolling
+sideways.
+
 **Not verified.** No real screen reader, no cross-browser or real-device testing, no automated
 visual-regression baseline, and no load testing. The two "control under 24px" findings are the
 skip link (measured while unfocused; it grows to a full panel on `:focus-visible`) and the

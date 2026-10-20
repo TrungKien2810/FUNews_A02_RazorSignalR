@@ -15,10 +15,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] &middot; FUNews</title>
+    @{
+        // Shared pages describe themselves; desk pages inherit the newsroom summary
+        // because they sit behind a login and are never meant to be linked to.
+        var description = ViewData["Description"] as string
+            ?? "FUNews is the campus newsroom: stories from every department, published as they happen.";
+        var canonical = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
+    }
+    <meta name="description" content="@description" />
+    <link rel="canonical" href="@canonical" />
+    <meta property="og:site_name" content="FUNews" />
+    <meta property="og:type" content="@(ViewData["OgType"] as string ?? "website")" />
+    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:url" content="@canonical" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="FUNews — latest stories" href="~/feed.rss" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body>
+<body id="top">
     <a class="sr-only" href="#main-content">Skip to content</a>
 
     <header class="app-bar">
@@ -89,6 +105,7 @@
         <div class="shell">
             FUNewsManagementSystem &middot; &copy; @DateTime.Now.Year
             <a asp-page="/News/Index" class="ms-3">Browse news</a>
+            <a asp-page="/Feed" class="ms-3">RSS feed</a>
         </div>
     </footer>
 

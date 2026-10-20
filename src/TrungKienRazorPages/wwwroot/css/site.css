@@ -65,11 +65,15 @@
 
   --focus-ring:     #2b5d8a;
 
-  /* --- type: one family used fully, plus Georgia for editorial voice ---
+  /* --- type: one family used fully, plus a serif for editorial voice ---
      No webfont: both faces ship with the OS, so there is no swap reflow
-     and no network dependency. Ratio 1.25 from a 16px base, 7 steps.    */
+     and no network dependency. Ratio 1.25 from a 16px base, 7 steps.
+     Georgia leads the stack on Windows but has no precomposed Vietnamese
+     glyphs there, so "Tuất" decomposed into base + combining marks and the
+     negative tracking pulled the pieces apart. Palatino and Cambria carry
+     the full Vietnamese set and keep the same editorial voice.            */
   --font-text: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --font-display: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --font-display: "Palatino Linotype", Palatino, Cambria, Georgia, "Times New Roman", serif;
 
   --t-xs:   0.75rem;    /* 12px — metadata only */
   --t-sm:   0.8125rem;  /* 13px — labels, table captions */
@@ -859,6 +863,82 @@ hr {
 .table-wrap > .card-header { border-bottom: 1px solid var(--border); }
 .table-responsive { border-radius: var(--r-card); }
 
+/* Below 768px the ledger becomes a stack of records rather than a sideways
+   scroll: a scroll region hides the Actions column off-screen and clips tag
+   chips mid-word, and the person on a phone needs "Edit this article" more
+   than they need aligned columns. Each cell carries its own label. */
+@media (max-width: 767.98px) {
+  .table-wrap { overflow-x: visible; }
+  .table-wrap > .table { min-width: 0; }
+
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    padding-block: var(--s-3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table tr:last-child { border-bottom: 0; }
+
+  .table td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding: var(--s-1) 0;
+    border: 0;
+    text-align: right;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    flex: 0 0 6.5rem;
+    color: var(--text-muted);
+    font-size: var(--t-xs);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  /* The action buttons are the point of the screen on a phone: full row, no label. */
+  .table td.table__actions {
+    justify-content: flex-start;
+    padding-top: var(--s-2);
+    white-space: normal;
+  }
+
+  .table td.table__actions::before { content: none; }
+
+  .table td.table__actions .btn { flex: 1 1 auto; }
+
+  /* Title and its standfirst stack in the value column instead of sitting side by side. */
+  .table td.table__title {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    row-gap: 2px;
+  }
+
+  .table td.table__title::before { grid-column: 1; grid-row: 1 / span 2; }
+
+  .table td.table__title > div { grid-column: 2; text-align: right; }
+}
+
 /* =====================================================================
    States: empty, loading, error. A blank screen during a slow request
    is a bug, and "No data" is not an empty state.
@@ -1125,4 +1205,73 @@ hr {
   color: var(--brand-600);
   font-weight: 600;
   border-radius: var(--r-control);
+}
+
+/* A tag that filters the newsroom keeps the chip shape but has to read as pressable. */
+a.tag {
+  text-decoration: none;
+}
+
+a.tag:hover,
+a.tag:focus-visible {
+  border-color: var(--brand-400);
+  color: var(--brand-700);
+}
+
+/* =====================================================================
+   Read next — the three stories under an article
+   ---------------------------------------------------------------------
+   Ruled rows in the same column as the body, not a card strip: the section
+   is the next page of the same read, and one link carries the reader to the
+   whole category once the three chosen by the editor are spent.
+   ===================================================================== */
+
+.related {
+  max-width: 43rem;
+  margin-top: var(--s-7);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--border);
+}
+
+.related__title {
+  margin: 0 0 var(--s-2);
+  font-family: var(--font-display);
+  font-size: var(--t-lg);
+  letter-spacing: -0.01em;
+}
+
+.related__list {
+  list-style: none;
+  margin: 0 0 var(--s-4);
+  padding: 0;
+}
+
+.related__item {
+  padding-block: var(--s-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.related__link {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: var(--t-md);
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.related__link:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.related__meta {
+  margin: var(--s-1) 0 0;
+  color: var(--text-muted);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.related__more {
+  font-size: var(--t-sm);
+  font-weight: 600;
 }

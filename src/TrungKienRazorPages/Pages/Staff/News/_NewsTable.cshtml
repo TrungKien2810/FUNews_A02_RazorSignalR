@@ -42,13 +42,13 @@ else
                 @foreach (var n in Model)
                 {
                     <tr>
-                        <td class="table__id">@n.NewsArticleId</td>
-                        <td>
+                        <td class="table__id" data-label="ID">@n.NewsArticleId</td>
+                        <td data-label="Title" class="table__title">
                             <div class="fw-semibold">@n.NewsTitle</div>
                             <div class="small text-muted text-truncate-2">@n.Headline</div>
                         </td>
-                        <td>@n.Category?.CategoryName</td>
-                        <td>
+                        <td data-label="Category">@n.Category?.CategoryName</td>
+                        <td data-label="Tags">
                             @if (n.Tags.Any())
                             {
                                 <div class="tag-list">
@@ -63,10 +63,10 @@ else
                                 <span class="text-subtle small">None</span>
                             }
                         </td>
-                        <td class="text-nowrap">@n.CreatedDate?.ToString("dd/MM/yyyy")</td>
-                        <td>@n.CreatedBy?.AccountName</td>
-                        <td><partial name="_StatusBadge" model="n.NewsStatus" /></td>
-                        <td class="table__actions">
+                        <td class="text-nowrap" data-label="Created">@n.CreatedDate?.ToString("dd MMM yyyy")</td>
+                        <td data-label="Author">@n.CreatedBy?.AccountName</td>
+                        <td data-label="Status"><partial name="_StatusBadge" model="n.NewsStatus" /></td>
+                        <td class="table__actions" data-label="Actions">
                             <button type="button" class="btn btn-sm btn-outline-secondary" data-modal-url="@Url.Page("/Staff/News/Index", "Details", new { id = n.NewsArticleId })">
                                 View<span class="sr-only"> @n.NewsTitle</span>
                             </button>
