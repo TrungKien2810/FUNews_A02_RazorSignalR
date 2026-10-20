@@ -1,0 +1,14 @@
+@page "/NotFound"
+@model TrungKienRazorPages.Pages.NotFoundModel
+@{
+    ViewData["Title"] = $"{Model.Code}";
+}
+<div class="state card">
+    <p class="eyebrow mb-1">Error @Model.Code</p>
+    <h1 class="state__title">@Model.Title</h1>
+    <p class="state__body">@Model.Body</p>
+    <div class="state__actions">
+        <a class="btn btn-primary" asp-page="/News/Index">Go to the newsroom</a>
+        <a class="btn btn-outline-secondary" asp-page="/Home">My start page</a>
+    </div>
+</div>

@@ -47,6 +47,15 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("StaffOnly", p => p.RequireRole(AccountRoles.StaffName));
 });
 
+// Compress HTML, CSS, JS and the RSS feed on the way out. The feed is not in the default
+// list because its content type is application/rss+xml, not one of the text/* defaults.
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes
+        .Concat(new[] { "application/rss+xml", "image/svg+xml" });
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -55,8 +64,32 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// A 404 from a mistyped address is a page, not a blank screen.
+app.UseStatusCodePagesWithReExecute("/NotFound", "?code={0}");
+
+// Baseline hardening. No CSP yet: the layout carries one inline script that marks the
+// document script-capable before first paint, and a policy without a nonce for it would
+// either break the menu or be written as 'unsafe-inline' and mean nothing.
+app.Use(async (context, next) =>
+{
+    var headers = context.Response.Headers;
+    headers["X-Content-Type-Options"] = "nosniff";
+    headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    headers["X-Frame-Options"] = "SAMEORIGIN";
+    await next();
+});
+
+app.UseResponseCompression();
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    // Our own css/js are requested with asp-append-version, and the vendored libraries
+    // change only when the folder does, so a week is a safe cache lifetime for both.
+    OnPrepareResponse = context =>
+    {
+        context.Context.Response.Headers.CacheControl = "public,max-age=604800";
+    }
+});
 
 app.UseRouting();
 
