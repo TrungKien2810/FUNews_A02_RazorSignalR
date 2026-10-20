@@ -1,0 +1,35 @@
+@model NewsArticle
+<partial name="_ModalHeader" model="@("News article #" + Model.NewsArticleId)" />
+<div class="modal-body">
+    <h3 class="h4">@Model.NewsTitle</h3>
+    <p class="lede">@Model.Headline</p>
+    <dl class="row small">
+        <dt class="col-sm-3 text-muted fw-normal">Category</dt><dd class="col-sm-9">@(Model.Category?.CategoryName ?? "—")</dd>
+        <dt class="col-sm-3 text-muted fw-normal">Author</dt><dd class="col-sm-9">@(Model.CreatedBy?.AccountName ?? "—")</dd>
+        <dt class="col-sm-3 text-muted fw-normal">Created</dt><dd class="col-sm-9">@Model.CreatedDate?.ToString("dd/MM/yyyy HH:mm")</dd>
+        <dt class="col-sm-3 text-muted fw-normal">Modified</dt><dd class="col-sm-9">@(Model.ModifiedDate?.ToString("dd/MM/yyyy HH:mm") ?? "—")</dd>
+        <dt class="col-sm-3 text-muted fw-normal">Source</dt><dd class="col-sm-9">@(string.IsNullOrEmpty(Model.NewsSource) ? "—" : Model.NewsSource)</dd>
+        <dt class="col-sm-3 text-muted fw-normal">Status</dt><dd class="col-sm-9"><partial name="_StatusBadge" model="Model.NewsStatus" /></dd>
+        <dt class="col-sm-3 text-muted fw-normal">Tags</dt>
+        <dd class="col-sm-9">
+            @if (Model.Tags.Any())
+            {
+                <div class="tag-list">
+                    @foreach (var t in Model.Tags)
+                    {
+                        <span class="tag">@t.TagName</span>
+                    }
+                </div>
+            }
+            else
+            {
+                <span class="text-subtle">None</span>
+            }
+        </dd>
+    </dl>
+    <hr />
+    <div class="news-content">@Model.NewsContent</div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+</div>

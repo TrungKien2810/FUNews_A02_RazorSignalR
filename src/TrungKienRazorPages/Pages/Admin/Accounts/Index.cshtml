@@ -1,0 +1,100 @@
+@page
+@model TrungKienRazorPages.Pages.Admin.Accounts.IndexModel
+@{
+    ViewData["Title"] = "Account management";
+}
+<div class="page-head">
+    <div class="page-head__text">
+        <p class="eyebrow mb-1">Administration</p>
+        <h1>Accounts</h1>
+        <p class="lede">Every staff and lecturer account in the system.</p>
+    </div>
+    <div class="page-head__actions">
+        <button type="button" class="btn btn-accent" data-modal-url="@Url.Page("Index", "Create")">New account</button>
+    </div>
+</div>
+
+<form method="get" class="filter-bar" role="search">
+    <div class="filter-bar__row">
+        <div class="filter-bar__field filter-bar__field--wide">
+            <label class="form-label" for="keyword">Search accounts</label>
+            <input type="text" id="keyword" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Name or email address" />
+        </div>
+        <div class="filter-bar__field">
+            <label class="form-label" for="role">Role</label>
+            <select id="role" name="role" class="form-select">
+                <option value="">All roles</option>
+                <option value="@AccountRoles.Staff" selected="@(Model.Role == AccountRoles.Staff)">Staff</option>
+                <option value="@AccountRoles.Lecturer" selected="@(Model.Role == AccountRoles.Lecturer)">Lecturer</option>
+            </select>
+        </div>
+        <div class="filter-bar__actions">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-page="Index" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Accounts.Any())
+{
+    <div class="state card">
+        @if (!string.IsNullOrWhiteSpace(Model.Keyword) || Model.Role is not null)
+        {
+            <p class="state__title">No account matches those filters</p>
+            <p class="state__body">No name or email address matches this search. Clear the filters to see every account.</p>
+            <div class="state__actions">
+                <a asp-page="Index" class="btn btn-primary">Clear filters</a>
+            </div>
+        }
+        else
+        {
+            <p class="state__title">No accounts yet</p>
+            <p class="state__body">Staff and lecturer accounts belong here. The administrator account is configured outside the database and is not listed.</p>
+            <div class="state__actions">
+                <button type="button" class="btn btn-accent" data-modal-url="@Url.Page("Index", "Create")">New account</button>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="table">
+            <caption class="sr-only">Staff and lecturer accounts, with edit and delete actions</caption>
+            <thead>
+                <tr>
+                    <th scope="col" class="table__id">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col" class="table__actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.Accounts)
+                {
+                    <tr>
+                        <td class="table__id">@a.AccountId</td>
+                        <td>@a.AccountName</td>
+                        <td>@a.AccountEmail</td>
+                        <td>
+                            @{
+                                var roleClass = a.AccountRole == AccountRoles.Staff ? "badge-role--staff" : "badge-role--lecturer";
+                            }
+                            <span class="badge @roleClass">@AccountRoles.GetRoleName(a.AccountRole)</span>
+                        </td>
+                        <td class="table__actions">
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-modal-url="@Url.Page("Index", "Edit", new { id = a.AccountId })">
+                                Edit<span class="sr-only"> @a.AccountName</span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-modal-url="@Url.Page("Index", "Delete", new { id = a.AccountId })">
+                                Delete<span class="sr-only"> @a.AccountName</span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="result-count">@Model.Accounts.Count account@(Model.Accounts.Count == 1 ? string.Empty : "s")</p>
+}

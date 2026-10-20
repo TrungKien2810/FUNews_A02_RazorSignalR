@@ -1,0 +1,20 @@
+@model NewsArticle
+<form asp-page="/Staff/News/Index" asp-page-handler="Delete" asp-route-id="@Model.NewsArticleId" method="post" data-ajax-form>
+    <partial name="_ModalHeader" model="@("Delete news article")" />
+    <div class="modal-body">
+        <div class="alert alert-danger d-none ajax-error" role="alert"></div>
+        <div class="alert alert-warning" role="alert">
+            This cannot be undone. The article and its tag links are removed for everyone, immediately.
+        </div>
+        <dl class="row mb-0">
+            <dt class="col-sm-3 text-muted fw-normal">ID</dt><dd class="col-sm-9">@Model.NewsArticleId</dd>
+            <dt class="col-sm-3 text-muted fw-normal">Title</dt><dd class="col-sm-9 fw-semibold">@Model.NewsTitle</dd>
+            <dt class="col-sm-3 text-muted fw-normal">Category</dt><dd class="col-sm-9">@Model.Category?.CategoryName</dd>
+            <dt class="col-sm-3 text-muted fw-normal">Created</dt><dd class="col-sm-9">@Model.CreatedDate?.ToString("dd/MM/yyyy")</dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Keep article</button>
+        <button type="submit" class="btn btn-danger">Delete article</button>
+    </div>
+</form>

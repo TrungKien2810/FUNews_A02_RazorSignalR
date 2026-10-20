@@ -1,0 +1,34 @@
+@model (string Title, List<NewsStatistic> Rows)
+<div class="card h-100">
+    <div class="card-header">@Model.Title</div>
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <caption class="sr-only">@Model.Title</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col" class="num">Total</th>
+                    <th scope="col" class="num">Active</th>
+                    <th scope="col" class="num">Inactive</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Rows.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-muted">No articles in this period.</td>
+                    </tr>
+                }
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td>@row.GroupName</td>
+                        <td class="num fw-semibold">@row.Total</td>
+                        <td class="num">@row.Active</td>
+                        <td class="num">@row.Inactive</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

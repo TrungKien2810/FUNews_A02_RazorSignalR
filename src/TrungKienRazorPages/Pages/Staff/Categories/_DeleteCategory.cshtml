@@ -1,0 +1,31 @@
+@model DeleteCategoryViewModel
+<form asp-page="/Staff/Categories/Index" asp-page-handler="Delete" asp-route-id="@Model.Category.CategoryId" method="post" data-ajax-form>
+    <partial name="_ModalHeader" model="@("Delete category")" />
+    <div class="modal-body">
+        <div class="alert alert-danger d-none ajax-error" role="alert"></div>
+        @if (Model.CanDelete)
+        {
+            <div class="alert alert-warning" role="alert">
+                This cannot be undone. Articles must be moved to another category first.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                This category is still in use — @Model.NewsCount article(s) reference it, or a sub-category belongs to it — so it cannot be deleted.
+            </div>
+        }
+        <dl class="row mb-0">
+            <dt class="col-sm-3 text-muted fw-normal">ID</dt><dd class="col-sm-9">@Model.Category.CategoryId</dd>
+            <dt class="col-sm-3 text-muted fw-normal">Name</dt><dd class="col-sm-9 fw-semibold">@Model.Category.CategoryName</dd>
+            <dt class="col-sm-3 text-muted fw-normal">Description</dt><dd class="col-sm-9">@Model.Category.CategoryDesciption</dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        @if (Model.CanDelete)
+        {
+            <button type="submit" class="btn btn-danger">Delete category</button>
+        }
+    </div>
+</form>

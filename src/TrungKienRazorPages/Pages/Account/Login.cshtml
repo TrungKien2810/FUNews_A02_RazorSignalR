@@ -1,0 +1,35 @@
+@page
+@model TrungKienRazorPages.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Sign in";
+    Layout = "_Layout";
+}
+<div class="login-wrapper">
+    <div class="login-card">
+        <p class="eyebrow mb-2">FUNewsManagementSystem</p>
+        <h1 class="login-card__brand">Sign in to the newsroom</h1>
+        <p class="login-card__hint">Use your university email address. Staff accounts can publish and edit articles.</p>
+
+        <form method="post" novalidate>
+            <input type="hidden" asp-for="Input.ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 empty-hidden mb-3" role="alert"></div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" class="form-control" placeholder="name@example.com" autocomplete="username" autofocus />
+                <span asp-validation-for="Input.Email"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Input.Password" class="form-label"></label>
+                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" />
+                <span asp-validation-for="Input.Password"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Sign in</button>
+        </form>
+
+        <p class="login-card__divider">or</p>
+        <a asp-page="/News/Index" class="btn btn-outline-secondary w-100">Browse news without signing in</a>
+    </div>
+</div>

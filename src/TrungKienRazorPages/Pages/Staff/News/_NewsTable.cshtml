@@ -1,0 +1,86 @@
+@model List<NewsArticle>
+@{
+    // The table is shared by the newsroom and by "My news history", which filter
+    // different things, and it is also the SignalR refresh payload. Read the page it
+    // was rendered for instead of naming one of them: on the history page
+    // asp-page="Index" resolved to the whole newsroom, so "Clear filters" threw away
+    // the filter the reader was trying to clear and landed on someone else's articles.
+    var isHistory = string.Equals(ViewContext.RouteData.Values["page"] as string,
+        "/Staff/News/History", StringComparison.OrdinalIgnoreCase);
+    var resetUrl = Url.Page(isHistory ? "/Staff/News/History" : "/Staff/News/Index");
+}
+@if (!Model.Any())
+{
+    <div class="state card">
+        <p class="state__title">No article matches those filters</p>
+        <p class="state__body">@(isHistory
+            ? "Nothing you have written matches this keyword. Clear the filter to see every article in your history, or write a new article."
+            : "Nothing here matches the current keyword, category, tag and status. Clear the filters to see the whole newsroom, or write a new article.")</p>
+        <div class="state__actions">
+            <a href="@resetUrl" class="btn btn-primary">Clear filters</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="table">
+            <caption class="sr-only">News articles you can edit, with view, edit and delete actions</caption>
+            <thead>
+                <tr>
+                    <th scope="col" class="table__id">ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Tags</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="table__actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var n in Model)
+                {
+                    <tr>
+                        <td class="table__id">@n.NewsArticleId</td>
+                        <td>
+                            <div class="fw-semibold">@n.NewsTitle</div>
+                            <div class="small text-muted text-truncate-2">@n.Headline</div>
+                        </td>
+                        <td>@n.Category?.CategoryName</td>
+                        <td>
+                            @if (n.Tags.Any())
+                            {
+                                <div class="tag-list">
+                                    @foreach (var t in n.Tags)
+                                    {
+                                        <span class="tag">@t.TagName</span>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-subtle small">None</span>
+                            }
+                        </td>
+                        <td class="text-nowrap">@n.CreatedDate?.ToString("dd/MM/yyyy")</td>
+                        <td>@n.CreatedBy?.AccountName</td>
+                        <td><partial name="_StatusBadge" model="n.NewsStatus" /></td>
+                        <td class="table__actions">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-modal-url="@Url.Page("/Staff/News/Index", "Details", new { id = n.NewsArticleId })">
+                                View<span class="sr-only"> @n.NewsTitle</span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-modal-url="@Url.Page("/Staff/News/Index", "Edit", new { id = n.NewsArticleId })">
+                                Edit<span class="sr-only"> @n.NewsTitle</span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-modal-url="@Url.Page("/Staff/News/Index", "Delete", new { id = n.NewsArticleId })">
+                                Delete<span class="sr-only"> @n.NewsTitle</span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="result-count">@Model.Count article@(Model.Count == 1 ? string.Empty : "s")</p>
+}

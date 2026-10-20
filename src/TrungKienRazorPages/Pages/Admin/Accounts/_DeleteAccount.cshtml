@@ -1,0 +1,32 @@
+@model DeleteAccountViewModel
+<form asp-page="/Admin/Accounts/Index" asp-page-handler="Delete" asp-route-id="@Model.Account.AccountId" method="post" data-ajax-form>
+    <partial name="_ModalHeader" model="@("Delete account")" />
+    <div class="modal-body">
+        <div class="alert alert-danger d-none ajax-error" role="alert"></div>
+        @if (Model.CanDelete)
+        {
+            <div class="alert alert-warning" role="alert">
+                This cannot be undone. The account loses access immediately.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                This account has published news articles, so it cannot be deleted. Reassign or delete those articles first.
+            </div>
+        }
+        <dl class="row mb-0">
+            <dt class="col-sm-3 text-muted fw-normal">ID</dt><dd class="col-sm-9">@Model.Account.AccountId</dd>
+            <dt class="col-sm-3 text-muted fw-normal">Name</dt><dd class="col-sm-9 fw-semibold">@Model.Account.AccountName</dd>
+            <dt class="col-sm-3 text-muted fw-normal">Email</dt><dd class="col-sm-9">@Model.Account.AccountEmail</dd>
+            <dt class="col-sm-3 text-muted fw-normal">Role</dt><dd class="col-sm-9">@AccountRoles.GetRoleName(Model.Account.AccountRole)</dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        @if (Model.CanDelete)
+        {
+            <button type="submit" class="btn btn-danger">Delete account</button>
+        }
+    </div>
+</form>

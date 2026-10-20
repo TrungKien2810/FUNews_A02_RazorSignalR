@@ -1,0 +1,56 @@
+@page "{id}"
+@model TrungKienRazorPages.Pages.News.DetailsModel
+@{
+    ViewData["Title"] = Model.Article.NewsTitle;
+}
+<nav aria-label="Breadcrumb">
+    <ol class="breadcrumb mt-4 mb-0">
+        <li class="breadcrumb-item"><a asp-page="/News/Index">News</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@(Model.Article.Category?.CategoryName ?? "Uncategorised")</li>
+    </ol>
+</nav>
+
+<div id="news-deleted-alert" class="alert alert-warning d-none mt-3" role="alert">
+    This article was deleted by a colleague while you were reading it.
+</div>
+
+<article data-news-id="@Model.Article.NewsArticleId">
+    <header class="article-head">
+        <p class="eyebrow mb-1">
+            @Model.Article.Category?.CategoryName
+            @if (Model.Article.NewsStatus == false)
+            {
+                <span class="badge badge-status--draft ms-2">Draft</span>
+            }
+        </p>
+        <h1 class="article-head__title">@Model.Article.NewsTitle</h1>
+        <p class="article-head__standfirst">@Model.Article.Headline</p>
+        <div class="article-meta">
+            <span>By <strong>@(Model.Article.CreatedBy?.AccountName ?? "Unknown")</strong></span>
+            <span>
+                <time datetime="@Model.Article.CreatedDate?.ToString("yyyy-MM-dd")">@Model.Article.CreatedDate?.ToString("dd MMMM yyyy, HH:mm")</time>
+            </span>
+            @if (Model.Article.ModifiedDate.HasValue)
+            {
+                <span>Updated <time datetime="@Model.Article.ModifiedDate.Value.ToString("yyyy-MM-dd")">@Model.Article.ModifiedDate.Value.ToString("dd MMMM yyyy, HH:mm")</time></span>
+            }
+            <span>Source: <strong>@(string.IsNullOrEmpty(Model.Article.NewsSource) ? "not stated" : Model.Article.NewsSource)</strong></span>
+        </div>
+    </header>
+
+    <div class="article-body news-content">@Model.Article.NewsContent</div>
+
+    @if (Model.Article.Tags.Any())
+    {
+        <div class="tag-list mb-4">
+            @foreach (var t in Model.Article.Tags)
+            {
+                <span class="tag">@t.TagName</span>
+            }
+        </div>
+    }
+</article>
+
+<div class="d-flex gap-2 pb-5 flex-wrap">
+    <a asp-page="/News/Index" class="btn btn-outline-secondary">&larr; Back to news</a>
+</div>

@@ -1,0 +1,73 @@
+@model NewsReport
+@{
+    var report = Model;
+}
+<p class="report-window">
+    News created from <strong>@report.StartDate.ToString("dd/MM/yyyy")</strong> to <strong>@report.EndDate.ToString("dd/MM/yyyy")</strong>,
+    sorted by created date, newest first.
+</p>
+
+@* The totals are the one thing to read first, so they carry the display figures. *@
+<div class="stat-row">
+    <div class="stat stat--total">
+        <span class="stat__label">Total news</span>
+        <span class="stat__value">@report.Total</span>
+    </div>
+    <div class="stat stat--active">
+        <span class="stat__label">Active</span>
+        <span class="stat__value">@report.Active</span>
+    </div>
+    <div class="stat stat--inactive">
+        <span class="stat__label">Inactive</span>
+        <span class="stat__value">@report.Inactive</span>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-4">
+        <partial name="_StatisticTable" model="@(("By category", report.ByCategory))" />
+    </div>
+    <div class="col-lg-4">
+        <partial name="_StatisticTable" model="@(("By author", report.ByAuthor))" />
+    </div>
+    <div class="col-lg-4">
+        <partial name="_StatisticTable" model="@(("By created date", report.ByDate))" />
+    </div>
+</div>
+
+<div class="table-wrap">
+    <div class="card-header">News articles in this period</div>
+    <table class="table">
+        <caption class="sr-only">News articles created in the selected date range, newest first</caption>
+        <thead>
+            <tr>
+                <th scope="col" class="table__id">#</th>
+                <th scope="col">Created</th>
+                <th scope="col">Title</th>
+                <th scope="col">Category</th>
+                <th scope="col">Author</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!report.Articles.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-muted">No news articles were created in this period.</td>
+                </tr>
+            }
+            @{ var i = 1; }
+            @foreach (var n in report.Articles)
+            {
+                <tr>
+                    <td class="table__id">@(i++)</td>
+                    <td class="text-nowrap">@n.CreatedDate?.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@n.NewsTitle</td>
+                    <td>@n.Category?.CategoryName</td>
+                    <td>@n.CreatedBy?.AccountName</td>
+                    <td><partial name="_StatusBadge" model="n.NewsStatus" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

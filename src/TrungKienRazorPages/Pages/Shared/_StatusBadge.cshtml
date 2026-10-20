@@ -1,0 +1,9 @@
+@model bool?
+@if (Model == true)
+{
+    <span class="badge badge-status--published">Active</span>
+}
+else
+{
+    <span class="badge badge-status--draft">Inactive</span>
+}

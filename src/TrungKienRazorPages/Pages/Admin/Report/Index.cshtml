@@ -1,0 +1,38 @@
+@page
+@model TrungKienRazorPages.Pages.Admin.Report.IndexModel
+@{
+    ViewData["Title"] = "Statistic report";
+}
+<div class="page-head">
+    <div class="page-head__text">
+        <p class="eyebrow mb-1">Administration</p>
+        <h1>Statistic report</h1>
+        <p class="lede">News articles created in a date range, newest first, with totals by category, author and date.</p>
+    </div>
+</div>
+
+<form method="get" class="filter-bar" novalidate>
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
+    <div class="filter-bar__row">
+        <div class="filter-bar__field">
+            <label asp-for="Filter.StartDate" class="form-label">From</label>
+            <input asp-for="Filter.StartDate" type="date" class="form-control" value="@Model.Filter.StartDate?.ToString("yyyy-MM-dd")" />
+            <span asp-validation-for="Filter.StartDate"></span>
+        </div>
+        <div class="filter-bar__field">
+            <label asp-for="Filter.EndDate" class="form-label">To</label>
+            <input asp-for="Filter.EndDate" type="date" class="form-control" value="@Model.Filter.EndDate?.ToString("yyyy-MM-dd")" />
+            <span asp-validation-for="Filter.EndDate"></span>
+        </div>
+        <div class="filter-bar__actions">
+            <button type="submit" class="btn btn-primary">Create report</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.Report != null)
+{
+    <div id="report-results" data-realtime-url="@Url.Page("/Admin/Report/Index", "Results")">
+        <partial name="_ReportResults" model="Model.Report" />
+    </div>
+}

@@ -1,0 +1,42 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model TrungKienRazorPages.Pages.News.IndexModel
+@{
+    ViewData["Title"] = "News";
+}
+<div class="page-head">
+    <div class="page-head__text">
+        <p class="eyebrow mb-1">Campus newsroom</p>
+        <h1>News</h1>
+        <p class="lede">Everything published by the department, newest first. The list updates on its own when a colleague changes an article.</p>
+    </div>
+</div>
+
+<form method="get" class="filter-bar" role="search">
+    <div class="filter-bar__row">
+        <div class="filter-bar__field filter-bar__field--wide">
+            <label class="form-label" for="Keyword">Search articles</label>
+            <input type="text" asp-for="Keyword" class="form-control" placeholder="Title, headline or content" />
+        </div>
+        <div class="filter-bar__field">
+            <label class="form-label" for="CategoryId">Category</label>
+            <select asp-for="CategoryId" class="form-select" asp-items="@(new SelectList(Model.Categories, nameof(Category.CategoryId), nameof(Category.CategoryName)))">
+                <option value="">All categories</option>
+            </select>
+        </div>
+        <div class="filter-bar__field">
+            <label class="form-label" for="TagId">Tag</label>
+            <select asp-for="TagId" class="form-select" asp-items="@(new SelectList(Model.Tags, nameof(Tag.TagId), nameof(Tag.TagName)))">
+                <option value="">All tags</option>
+            </select>
+        </div>
+        <div class="filter-bar__actions">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-page="Index" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </div>
+</form>
+
+<div id="news-list" data-realtime-url="@Url.Page("/News/Index", "List")">
+    <partial name="_NewsCards" model="Model.Articles" />
+</div>

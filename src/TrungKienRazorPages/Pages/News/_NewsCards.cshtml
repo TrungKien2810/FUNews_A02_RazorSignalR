@@ -1,0 +1,103 @@
+@model List<NewsArticle>
+@{
+    // The partial is also the SignalR refresh payload, so it has to stand on its own:
+    // it carries every state (empty with filters, empty without, populated) and no
+    // page-level ViewData is required for it to render correctly.
+    var isFiltered = !string.IsNullOrWhiteSpace(Context.Request.Query["Keyword"])
+                  || !string.IsNullOrWhiteSpace(Context.Request.Query["CategoryId"])
+                  || !string.IsNullOrWhiteSpace(Context.Request.Query["TagId"]);
+
+    var lead = Model.FirstOrDefault();
+    var rest = Model.Skip(1).ToList();
+}
+
+@if (!Model.Any())
+{
+    <div class="state card">
+        @if (isFiltered)
+        {
+            <p class="state__title">No article matches those filters</p>
+            <p class="state__body">Nothing in the newsroom matches this combination of keyword, category and tag. Try a shorter keyword, or clear the filters to see everything.</p>
+            <div class="state__actions">
+                <a asp-page="Index" class="btn btn-primary">Clear filters</a>
+            </div>
+        }
+        else
+        {
+            <p class="state__title">No news has been published yet</p>
+            <p class="state__body">Articles appear here as soon as a staff member publishes one. Staff can create the first article from Manage News.</p>
+            <div class="state__actions">
+                <a asp-page="/Staff/News/Index" class="btn btn-primary">Go to Manage News</a>
+            </div>
+        }
+    </div>
+}
+else
+{
+    @* Lead item: the newest article earns display size. A grid of equal cards
+       gives the eye nowhere to land; a newsroom makes the first story loudest. *@
+    if (lead is not null)
+    {
+        <a class="lead-story" href="@Url.Page("/News/Details", new { id = lead.NewsArticleId })">
+            <p class="eyebrow mb-0">
+                @lead.Category?.CategoryName
+                <span aria-hidden="true">&middot;</span>
+                <time datetime="@lead.CreatedDate?.ToString("yyyy-MM-dd")">@lead.CreatedDate?.ToString("dd MMMM yyyy")</time>
+                @if (lead.NewsStatus == false)
+                {
+                    <span class="badge badge-status--draft ms-2">Draft</span>
+                }
+            </p>
+            <h2 class="lead-story__title">@lead.NewsTitle</h2>
+            <p class="lead-story__standfirst text-truncate-2">@lead.Headline</p>
+            <div class="lead-story__foot">
+                @if (lead.Tags.Any())
+                {
+                    <div class="tag-list">
+                        @foreach (var t in lead.Tags)
+                        {
+                            <span class="tag">@t.TagName</span>
+                        }
+                    </div>
+                }
+                <span class="lead-story__cue ms-auto">Read the full article &rarr;</span>
+            </div>
+        </a>
+    }
+
+    @if (rest.Any())
+    {
+        <p class="eyebrow">Also in the newsroom</p>
+        <ul class="story-list">
+            @foreach (var n in rest)
+            {
+                <li>
+                    <a class="story-list__item" href="@Url.Page("/News/Details", new { id = n.NewsArticleId })">
+                        <div>
+                            <h3 class="story-list__title">@n.NewsTitle</h3>
+                            <p class="story-list__headline text-truncate-2">@n.Headline</p>
+                            @if (n.Tags.Any())
+                            {
+                                <div class="tag-list mt-2">
+                                    @foreach (var t in n.Tags)
+                                    {
+                                        <span class="tag">@t.TagName</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="story-list__meta">
+                            <span class="story-list__cat">@n.Category?.CategoryName</span>
+                            <time class="story-list__date" datetime="@n.CreatedDate?.ToString("yyyy-MM-dd")">@n.CreatedDate?.ToString("dd/MM/yyyy")</time>
+                        </div>
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+
+    <p class="result-count">
+        @Model.Count article@(Model.Count == 1 ? string.Empty : "s")
+        @(isFiltered ? "match these filters" : "in the newsroom")
+    </p>
+}

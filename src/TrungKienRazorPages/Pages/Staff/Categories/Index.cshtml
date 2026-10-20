@@ -1,0 +1,97 @@
+@page
+@model TrungKienRazorPages.Pages.Staff.Categories.IndexModel
+@{
+    ViewData["Title"] = "Category management";
+}
+<div class="page-head">
+    <div class="page-head__text">
+        <p class="eyebrow mb-1">Staff workspace</p>
+        <h1>Categories</h1>
+        <p class="lede">Categories group articles across the site. A category that still has articles against it cannot be deleted.</p>
+    </div>
+    <div class="page-head__actions">
+        <button type="button" class="btn btn-accent" data-modal-url="@Url.Page("Index", "Create")">New category</button>
+    </div>
+</div>
+
+<form method="get" class="filter-bar" role="search">
+    <div class="filter-bar__row">
+        <div class="filter-bar__field filter-bar__field--wide">
+            <label class="form-label" for="keyword">Search categories</label>
+            <input type="text" id="keyword" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Name or description" />
+        </div>
+        <div class="filter-bar__field">
+            <label class="form-label" for="isActive">Status</label>
+            <select id="isActive" name="isActive" class="form-select">
+                <option value="">All statuses</option>
+                <option value="true" selected="@(Model.IsActive == true)">Active</option>
+                <option value="false" selected="@(Model.IsActive == false)">Inactive</option>
+            </select>
+        </div>
+        <div class="filter-bar__actions">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-page="Index" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Categories.Any())
+{
+    <div class="state card">
+        @if (!string.IsNullOrWhiteSpace(Model.Keyword) || Model.IsActive is not null)
+        {
+            <p class="state__title">No category matches those filters</p>
+            <p class="state__body">Try a shorter keyword, or clear the filters to see every category.</p>
+            <div class="state__actions">
+                <a asp-page="Index" class="btn btn-primary">Clear filters</a>
+            </div>
+        }
+        else
+        {
+            <p class="state__title">No categories yet</p>
+            <p class="state__body">Categories organise articles across the newsroom. Create the first one to start grouping news.</p>
+            <div class="state__actions">
+                <button type="button" class="btn btn-accent" data-modal-url="@Url.Page("Index", "Create")">New category</button>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="table">
+            <caption class="sr-only">News categories, with edit and delete actions</caption>
+            <thead>
+                <tr>
+                    <th scope="col" class="table__id">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Parent</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="table__actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.Categories)
+                {
+                    <tr>
+                        <td class="table__id">@c.CategoryId</td>
+                        <td class="fw-semibold">@c.CategoryName</td>
+                        <td><span class="text-truncate-2">@c.CategoryDesciption</span></td>
+                        <td>@(c.ParentCategoryId == c.CategoryId ? "—" : c.ParentCategory?.CategoryName ?? "—")</td>
+                        <td><partial name="_StatusBadge" model="c.IsActive" /></td>
+                        <td class="table__actions">
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-modal-url="@Url.Page("Index", "Edit", new { id = c.CategoryId })">
+                                Edit<span class="sr-only"> @c.CategoryName</span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-modal-url="@Url.Page("Index", "Delete", new { id = c.CategoryId })">
+                                Delete<span class="sr-only"> @c.CategoryName</span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="result-count">@Model.Categories.Count categor@(Model.Categories.Count == 1 ? "y" : "ies")</p>
+}

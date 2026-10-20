@@ -1,0 +1,32 @@
+@page
+@model TrungKienRazorPages.Pages.Staff.News.HistoryModel
+@{
+    ViewData["Title"] = "My news history";
+}
+<div class="page-head">
+    <div class="page-head__text">
+        <p class="eyebrow mb-1">Staff workspace</p>
+        <h1>My news history</h1>
+        <p class="lede">Articles created by <strong>@User.Identity?.Name</strong>, newest first.</p>
+    </div>
+    <div class="page-head__actions">
+        <button type="button" class="btn btn-accent" data-modal-url="@Url.Page("/Staff/News/Index", "Create")">New article</button>
+    </div>
+</div>
+
+<form method="get" class="filter-bar" role="search">
+    <div class="filter-bar__row">
+        <div class="filter-bar__field filter-bar__field--wide">
+            <label class="form-label" for="keyword">Search my articles</label>
+            <input type="text" id="keyword" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Title, headline or content" />
+        </div>
+        <div class="filter-bar__actions">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-page="History" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </div>
+</form>
+
+<div id="news-table" data-realtime-url="@Url.Page("/Staff/News/History", "List")">
+    <partial name="_NewsTable" model="Model.Articles" />
+</div>

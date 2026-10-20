@@ -1,0 +1,26 @@
+@page
+@model ErrorModel
+@{
+    ViewData["Title"] = "Something went wrong";
+}
+<div class="page-head">
+    <div class="page-head__text">
+        <p class="eyebrow mb-1">Error</p>
+        <h1>The request could not be completed</h1>
+    </div>
+</div>
+
+<div class="state card">
+    <p class="state__title">Something went wrong on our side</p>
+    <p class="state__body">The action did not finish. Nothing you typed has been lost if you go back — retry, and if it keeps failing pass the reference below to an administrator.</p>
+    @if (!string.IsNullOrEmpty(Model.RequestId))
+    {
+        <p class="state__body">
+            Reference: <code>@Model.RequestId</code>
+        </p>
+    }
+    <div class="state__actions">
+        <a class="btn btn-primary" asp-page="/Home">Back to my start page</a>
+        <a class="btn btn-outline-secondary" asp-page="/News/Index">Browse news</a>
+    </div>
+</div>

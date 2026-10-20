@@ -1,0 +1,36 @@
+@page
+@model TrungKienRazorPages.Pages.Staff.Profile.IndexModel
+@{
+    ViewData["Title"] = "My profile";
+}
+<div class="page-head">
+    <div class="page-head__text">
+        <p class="eyebrow mb-1">Staff workspace</p>
+        <h1>My profile</h1>
+        <p class="lede">The account details other staff see against the articles you publish.</p>
+    </div>
+</div>
+
+<div class="card profile-card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4 text-muted fw-normal">Account ID</dt>
+            <dd class="col-sm-8 num">@Model.Account.AccountId</dd>
+            <dt class="col-sm-4 text-muted fw-normal">Name</dt>
+            <dd class="col-sm-8 fw-semibold">@Model.Account.AccountName</dd>
+            <dt class="col-sm-4 text-muted fw-normal">Email</dt>
+            <dd class="col-sm-8">@Model.Account.AccountEmail</dd>
+            <dt class="col-sm-4 text-muted fw-normal">Role</dt>
+            <dd class="col-sm-8">
+                <span class="badge @(Model.Account.AccountRole == AccountRoles.Staff ? "badge-role--staff" : "badge-role--lecturer")">
+                    @AccountRoles.GetRoleName(Model.Account.AccountRole)
+                </span>
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<div class="d-flex gap-2 mt-4 flex-wrap">
+    <button type="button" class="btn btn-primary" data-modal-url="@Url.Page("Index", "Edit")">Edit profile</button>
+    <a class="btn btn-outline-secondary" asp-page="/Staff/News/History">My news history</a>
+</div>

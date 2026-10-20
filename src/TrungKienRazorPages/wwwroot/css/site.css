@@ -1,0 +1,1128 @@
+/* =====================================================================
+   FUNewsManagementSystem — design system
+   ---------------------------------------------------------------------
+   Every colour, size, space and duration on screen comes from the token
+   block below. A screen that reaches for a raw hex or a one-off pixel
+   value has left the system.
+
+   Light theme only, declared with `color-scheme` so the browser stops
+   painting native controls against a background nobody chose. A second
+   theme that was never designed is worse than one honest theme.
+   ===================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* --- brand hue: institutional navy, the academic-press convention ---
+     Not violet, not indigo→cyan. One hue, spent sparingly.               */
+  --brand-100: #e9eef6;
+  --brand-200: #cbd6e8;
+  --brand-300: #93a8c9;
+  --brand-400: #4f6f9e;
+  --brand-500: #2b4f88;
+  --brand-600: #12305c;
+  --brand-700: #0d2547;
+  --brand-800: #081931;
+
+  /* --- neutral ramp, tinted ~5% toward the brand hue ------------------ */
+  --n-0:   #ffffff;
+  --n-25:  #fbfcfd;
+  --n-50:  #f5f7fa;
+  --n-100: #eef1f6;
+  --n-200: #e1e6ee;
+  --n-300: #cdd5e1;
+  --n-400: #a8b3c4;
+  --n-500: #7c8798;
+  --n-600: #5a6478;
+  --n-700: #3d4756;
+  --n-800: #2a323d;
+  --n-900: #1b2129;
+
+  /* --- semantic layer: screens reference only these ------------------- */
+  --bg:             var(--n-50);
+  --surface:        var(--n-0);
+  --surface-sunken: var(--n-100);
+  --border:         var(--n-200);
+  --border-strong:  var(--n-300);
+  --text:           #1b2129;
+  --text-muted:     #55617a;  /* 5.79:1 on --bg */
+  --text-subtle:    #5d687b;  /* 5.24:1 on --bg — was #6b7688, which axe measured at 4.27:1 */
+  --text-on-brand:  #ffffff;
+
+  --accent:         #8a5a00;
+  --accent-hover:   #6d4700;
+  --accent-contrast:#ffffff;
+  --accent-surface: #fdf4e3;
+  --accent-border:  #e8cfa0;
+
+  --danger:         #b3261e;
+  --danger-surface: #fdf0ef;
+  --danger-border:  #efc9c6;
+  --success:        #1f6f43;
+  --success-surface:#eef7f2;
+  --info:           #2b5d8a;
+  --info-surface:   #eef4fa;
+
+  --focus-ring:     #2b5d8a;
+
+  /* --- type: one family used fully, plus Georgia for editorial voice ---
+     No webfont: both faces ship with the OS, so there is no swap reflow
+     and no network dependency. Ratio 1.25 from a 16px base, 7 steps.    */
+  --font-text: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-display: Georgia, "Iowan Old Style", "Times New Roman", serif;
+
+  --t-xs:   0.75rem;    /* 12px — metadata only */
+  --t-sm:   0.8125rem;  /* 13px — labels, table captions */
+  --t-base: 0.9375rem;  /* 15px — table body, dense copy */
+  --t-md:   1rem;       /* 16px — body */
+  --t-lg:   1.25rem;    /* 20px */
+  --t-xl:   1.5625rem;  /* 25px */
+  --t-2xl:  1.953rem;   /* 31px — page title */
+  --t-3xl:  2.441rem;   /* 39px — lead headline */
+
+  /* --- space: one scale, three density tiers (~1:2:4) ------------------ */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+
+  /* --- radius belongs to element size, not to one global value -------- */
+  --r-control: 4px;
+  --r-card:    8px;
+  --r-sheet:   12px;
+  --r-pill:    999px;
+
+  /* --- two separation mechanisms, two levels. Never both on one card. - */
+  --elev-1: 0 1px 2px rgba(13, 37, 71, .06);
+  --elev-2: 0 2px 8px rgba(13, 37, 71, .10);
+
+  --spine: 3px; /* the left rule that gives every screen one alignment spine */
+
+  /* --- motion by role, not one global duration ------------------------ */
+  --d-fast:  110ms;  /* direct feedback: hover, press, toggle */
+  --d-mid:   200ms;  /* entrances, region refresh */
+  --d-slow:  320ms;  /* large surfaces */
+
+  --wrap: 1200px;
+}
+
+/* =====================================================================
+   Base
+   ===================================================================== */
+
+html {
+  font-size: 100%;
+  position: relative;
+  min-height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.6;
+  margin: 0;
+  padding-bottom: var(--s-7);
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main { flex: 1 0 auto; }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--brand-700);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--t-2xl); }
+h2 { font-size: var(--t-xl); }
+h3 { font-size: var(--t-lg); }
+
+/* All-caps labels need positive tracking; display sizes need negative. */
+.eyebrow {
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+.lede {
+  color: var(--text-muted);
+  max-width: 65ch;
+  text-wrap: pretty;
+}
+
+.text-muted  { color: var(--text-muted) !important; }
+.text-subtle { color: var(--text-subtle) !important; }
+.small, small { font-size: var(--t-sm); }
+
+a { color: var(--brand-500); }
+a:hover { color: var(--brand-600); }
+
+/* Bootstrap paints the active breadcrumb crumb #6c757d on --bg, which axe
+   measures at 4.36:1. Use the token ramp instead. */
+.breadcrumb { font-size: var(--t-base); }
+.breadcrumb-item.active { color: var(--text-muted); }
+.breadcrumb-item + .breadcrumb-item::before { color: var(--text-subtle); }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  opacity: 1;
+  margin: var(--s-5) 0;
+}
+
+/* Never remove a focus ring without replacing it. */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--r-control);
+}
+
+.shell {
+  width: 100%;
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: 0 var(--s-4);
+}
+
+/* =====================================================================
+   Top bar — the one saturated surface in the product
+   ===================================================================== */
+
+.app-bar {
+  background: var(--brand-600);
+  border-bottom: var(--spine) solid var(--accent);
+  box-shadow: var(--elev-1);
+}
+
+.app-bar__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  min-height: 60px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-display);
+  font-size: var(--t-lg);
+  font-weight: 700;
+  color: var(--text-on-brand);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  padding: var(--s-2) 0;
+}
+.brand:hover { color: var(--text-on-brand); }
+.brand__mark {
+  color: var(--accent-border);
+  font-size: var(--t-xl);
+  line-height: 1;
+}
+.brand__sub {
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-200);
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  flex-wrap: wrap;
+}
+
+.app-nav__link {
+  display: inline-block;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-control);
+  font-size: var(--t-base);
+  font-weight: 500;
+  /* 10.8:1 on --brand-600. Bootstrap's default white-on-primary link was
+     3.1:1 and failed axe colour-contrast on every page. */
+  color: #e7edf7;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: background-color var(--d-fast) ease-out,
+              color var(--d-fast) ease-out,
+              border-color var(--d-fast) ease-out;
+  min-height: 40px;
+  line-height: 1.75;
+}
+.app-nav__link:hover {
+  background: rgba(255, 255, 255, .10);
+  color: #fff;
+}
+.app-nav__link.active {
+  color: #fff;
+  background: rgba(255, 255, 255, .14);
+  border-bottom-color: var(--accent-border);
+}
+
+.app-bar__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  row-gap: var(--s-2);
+  gap: var(--s-3);
+  margin-left: auto;
+  padding: var(--s-2) 0;
+}
+
+/* Narrow screens: the bar wraps to two lines, so shrink the inter-group
+   gap and let the actions take the full row instead of squeezing beside
+   the nav and leaving the logout button half-hanging. */
+@media (max-width: 767.98px) {
+  .app-bar__inner { gap: var(--s-3); }
+  .app-bar__actions { margin-left: 0; width: 100%; justify-content: flex-start; }
+}
+
+.who {
+  font-size: var(--t-base);
+  color: #e7edf7;
+  line-height: 1.2;
+  text-align: right;
+}
+.who__name { display: block; font-weight: 600; color: #fff; }
+.who__role {
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brand-200);
+}
+
+/* =====================================================================
+   Page header — a rule, one title, one primary action
+   ===================================================================== */
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  padding: var(--s-6) 0 var(--s-3);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--s-5);
+}
+.page-head__text { min-width: 0; }
+.page-head h1 { margin: 0 0 var(--s-1); }
+.page-head .lede { margin: 0; font-size: var(--t-base); }
+.page-head__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+/* =====================================================================
+   Buttons — one primary per view, everything else is quieter
+
+   The bundled Bootstrap is 5.1.0, which writes these colours as literals
+   rather than reading `--bs-btn-*` custom properties (those arrived in
+   5.2). Overriding the variables alone therefore did nothing and the
+   stock greys stayed on screen — axe caught it as a 4.36:1 contrast
+   failure on .btn-outline-secondary. These rules set the properties
+   directly, at the same specificity and later in the cascade.
+   ===================================================================== */
+
+.btn {
+  border-radius: var(--r-control);
+  font-size: var(--t-base);
+  font-weight: 600;
+  padding: 0.4375rem 0.875rem;
+  border-width: 1px;
+  transition: background-color var(--d-fast) ease-out,
+              border-color var(--d-fast) ease-out,
+              color var(--d-fast) ease-out;
+  min-height: 38px;
+}
+
+/* 44px hit area on touch without inflating the desktop density. */
+@media (pointer: coarse) {
+  .btn, .app-nav__link { min-height: 44px; }
+}
+
+.btn-primary,
+.btn-primary:focus {
+  color: var(--text-on-brand);
+  background-color: var(--brand-500);
+  border-color: var(--brand-500);
+}
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary.active {
+  color: var(--text-on-brand);
+  background-color: var(--brand-600);
+  border-color: var(--brand-600);
+}
+.btn-primary:disabled, .btn-primary.disabled {
+  color: var(--text-on-brand);
+  background-color: var(--n-400);
+  border-color: var(--n-400);
+}
+
+/* The accent is spent on the one action that creates something. */
+.btn-accent,
+.btn-accent:focus {
+  color: var(--accent-contrast);
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+.btn-accent:hover,
+.btn-accent:active,
+.btn-accent.active {
+  color: var(--accent-contrast);
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-outline-primary,
+.btn-outline-primary:focus {
+  color: var(--brand-500);
+  background-color: transparent;
+  border-color: var(--border-strong);
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:active,
+.btn-outline-primary.active {
+  color: var(--brand-600);
+  background-color: var(--brand-100);
+  border-color: var(--brand-400);
+}
+
+.btn-outline-danger,
+.btn-outline-danger:focus {
+  color: var(--danger);
+  background-color: transparent;
+  border-color: var(--danger-border);
+}
+.btn-outline-danger:hover,
+.btn-outline-danger:active,
+.btn-outline-danger.active {
+  color: var(--danger);
+  background-color: var(--danger-surface);
+  border-color: var(--danger);
+}
+
+/* --text-muted, not --text-subtle: this sits on --bg as often as on a card. */
+.btn-outline-secondary,
+.btn-outline-secondary:focus {
+  color: var(--text-muted);
+  background-color: transparent;
+  border-color: var(--border-strong);
+}
+.btn-outline-secondary:hover,
+.btn-outline-secondary:active,
+.btn-outline-secondary.active {
+  color: var(--text);
+  background-color: var(--surface-sunken);
+  border-color: var(--n-400);
+}
+
+.btn-outline-light,
+.btn-outline-light:focus {
+  color: #e7edf7;
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, .35);
+}
+.btn-outline-light:hover,
+.btn-outline-light:active,
+.btn-outline-light.active {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .14);
+  border-color: rgba(255, 255, 255, .6);
+}
+
+.btn-danger,
+.btn-danger:focus {
+  color: #fff;
+  background-color: var(--danger);
+  border-color: var(--danger);
+}
+.btn-danger:hover,
+.btn-danger:active,
+.btn-danger.active {
+  color: #fff;
+  background-color: #8f1e17;
+  border-color: #8f1e17;
+}
+
+.btn-sm {
+  font-size: var(--t-sm);
+  padding: 0.25rem 0.625rem;
+  min-height: 32px;
+}
+
+/* WCAG 2.5.8 asks for a 24×24 target, and a fingertip asks for more. The
+   compact row buttons stay 32px on a mouse and grow to a real 44×44 on
+   touch, where a 45px-wide "Edit" is genuinely hard to hit. */
+@media (pointer: coarse) {
+  .btn-sm {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem 0.75rem;
+  }
+  .footer__sep { padding: var(--s-2) var(--s-2); }
+}
+
+.btn-link {
+  color: var(--brand-500);
+  font-weight: 600;
+  text-decoration: none;
+}
+.btn-link:hover { color: var(--brand-600); text-decoration: underline; }
+
+/* =====================================================================
+   Forms
+   ===================================================================== */
+
+.form-label {
+  font-size: var(--t-base);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: var(--s-1);
+}
+
+.form-control, .form-select {
+  border-color: var(--border-strong);
+  border-radius: var(--r-control);
+  font-size: var(--t-md); /* ≥16px so iOS does not zoom on focus */
+  padding: 0.4375rem 0.625rem;
+  color: var(--text);
+  background-color: var(--surface);
+  transition: border-color var(--d-fast) ease-out,
+              box-shadow var(--d-fast) ease-out;
+}
+.form-control::placeholder { color: var(--text-subtle); opacity: 1; }
+.form-control:focus, .form-select:focus {
+  border-color: var(--brand-400);
+  box-shadow: 0 0 0 3px var(--brand-100);
+  outline: 2px solid transparent;
+}
+.form-control:disabled, .form-select:disabled {
+  background: var(--surface-sunken);
+  color: var(--text-subtle);
+}
+.form-text { font-size: var(--t-sm); color: var(--text-subtle); }
+
+.form-check-input:checked {
+  background-color: var(--brand-500);
+  border-color: var(--brand-500);
+}
+.form-check-label { font-size: var(--t-base); }
+
+/* Validation: colour is never the only signal — there is also text. */
+.field-validation-error {
+  display: block;
+  color: var(--danger);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  margin-top: var(--s-1);
+}
+.input-validation-error {
+  border-color: var(--danger) !important;
+  background-color: var(--danger-surface);
+}
+.validation-summary-errors {
+  color: var(--danger);
+  font-size: var(--t-base);
+  background: var(--danger-surface);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--r-control);
+  padding: var(--s-3) var(--s-3) var(--s-3) var(--s-5);
+}
+.validation-summary-errors ul { margin: 0; }
+.validation-summary-valid { display: none; }
+/* An empty validation summary still renders its box and padding otherwise. */
+.empty-hidden:empty { display: none; }
+
+/* =====================================================================
+   Filter bar — a tool, deliberately quieter than the primary action
+   ===================================================================== */
+
+.filter-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: var(--s-3) var(--s-4);
+  margin-bottom: var(--s-5);
+}
+.filter-bar__row {
+  display: flex;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+  /* Fields carry a label above the input; the actions carry buttons only.
+     flex-end puts the button bottoms on the input bottoms. center left the
+     Search/Reset pair floating ~15px above the inputs on every management
+     screen. */
+  align-items: flex-end;
+}
+.filter-bar__field { flex: 1 1 12rem; min-width: 0; }
+.filter-bar__field--wide { flex: 2 1 18rem; }
+/* Same baseline inside the pair: a <button> and an <a class="btn"> have a
+   1px line-height difference, so centre them rather than stretching. */
+.filter-bar__actions {
+  display: flex;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+  flex: none;
+  align-items: center;
+  align-self: flex-end;
+  padding-bottom: 1px;
+}
+
+/* =====================================================================
+   Report: three totals, then breakdowns. The totals are the one thing to
+   read first, so they get display-scale figures and their own surface.
+   ===================================================================== */
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: var(--spine) solid var(--border-strong);
+  border-radius: var(--r-card);
+  padding: var(--s-4);
+}
+.stat--total  { border-left-color: var(--brand-500); }
+.stat--active { border-left-color: var(--success); }
+.stat--inactive { border-left-color: var(--n-400); }
+.stat__label {
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  display: block;
+  margin-bottom: var(--s-1);
+}
+.stat__value {
+  font-family: var(--font-display);
+  font-size: var(--t-xl);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--brand-700);
+  font-variant-numeric: tabular-nums;
+}
+.report-window {
+  color: var(--text-muted);
+  font-size: var(--t-base);
+  margin-bottom: var(--s-4);
+}
+.report-window strong { color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* =====================================================================
+   Surfaces
+   ===================================================================== */
+
+.card, .panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  box-shadow: none; /* border *or* shadow, never both */
+}
+.card-body { padding: var(--s-4); }
+.card-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-card) var(--r-card) 0 0;
+}
+
+/* =====================================================================
+   Lead + list — the signature decision
+   The newest article earns display size; the rest are quiet rows. A
+   template pays every card the same respect; a newsroom does not.
+   ===================================================================== */
+
+.lead-story {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: var(--spine) solid var(--brand-500);
+  border-radius: var(--r-card);
+  padding: var(--s-5);
+  margin-bottom: var(--s-6);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--d-fast) ease-out,
+              box-shadow var(--d-fast) ease-out;
+}
+.lead-story:hover {
+  border-left-color: var(--accent);
+  box-shadow: var(--elev-2);
+  color: inherit;
+}
+.lead-story__title {
+  font-family: var(--font-display);
+  font-size: var(--t-2xl);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--brand-700);
+  margin: var(--s-2) 0 var(--s-3);
+  max-width: 34ch; /* a lead headline is read, so keep the measure short */
+}
+.lead-story__standfirst {
+  font-size: var(--t-md);
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 65ch;
+  margin: 0 0 var(--s-4);
+}
+.lead-story__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  padding-top: var(--s-3);
+}
+.lead-story__cue {
+  font-weight: 600;
+  color: var(--brand-500);
+  font-size: var(--t-base);
+}
+.lead-story:hover .lead-story__cue { color: var(--accent); }
+
+/* No box, no shadow — a list is quieter than a grid of cards on purpose. */
+.story-list { list-style: none; margin: 0; padding: 0; }
+.story-list__item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s-2) var(--s-4);
+  align-items: baseline;
+  padding: var(--s-4) var(--s-3) var(--s-4) var(--s-4);
+  border-bottom: 1px solid var(--border);
+  border-left: var(--spine) solid transparent;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color var(--d-fast) ease-out,
+              border-left-color var(--d-fast) ease-out;
+}
+.story-list__item:hover {
+  background: var(--n-25);
+  border-left-color: var(--accent);
+  color: inherit;
+}
+.story-list__title {
+  font-family: var(--font-display);
+  font-size: var(--t-lg);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--brand-700);
+  margin: 0 0 var(--s-1);
+}
+.story-list__headline {
+  font-size: var(--t-base);
+  color: var(--text-muted);
+  margin: 0 0 var(--s-2);
+  max-width: 70ch;
+}
+.story-list__meta {
+  font-size: var(--t-sm);
+  color: var(--text-subtle);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.story-list__date { display: block; }
+.story-list__cat {
+  display: block;
+  font-weight: 600;
+  color: var(--brand-500);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 575.98px) {
+  .story-list__item { grid-template-columns: 1fr; }
+  .lead-story__title { font-size: var(--t-xl); }
+}
+
+/* =====================================================================
+   Tags and badges
+   ===================================================================== */
+
+.tag-list { display: flex; flex-wrap: wrap; gap: var(--s-1); }
+.tag {
+  display: inline-block;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--brand-600);
+  background: var(--brand-100);
+  border: 1px solid var(--brand-200);
+  border-radius: var(--r-pill);
+  padding: 0.125rem 0.5rem;
+  white-space: nowrap;
+}
+
+.badge {
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+}
+.badge-role--staff    { color: var(--brand-600); background: var(--brand-100); border-color: var(--brand-200); }
+.badge-role--lecturer { color: var(--accent); background: var(--accent-surface); border-color: var(--accent-border); }
+.badge-status--live   { color: var(--success); background: var(--success-surface); border-color: #c4e0d0; }
+.badge-status--published { color: var(--success); background: var(--success-surface); border-color: #c4e0d0; }
+.badge-status--draft  { color: var(--text-muted); background: var(--surface-sunken); border-color: var(--border-strong); }
+
+/* =====================================================================
+   Tables — dense, aligned, numbers set as numbers
+   ===================================================================== */
+
+.table {
+  --bs-table-border-color: var(--border);
+  margin-bottom: 0;
+  color: var(--text);
+  font-size: var(--t-base);
+}
+.table > thead th {
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border-strong);
+  padding: var(--s-3) var(--s-4);
+  white-space: nowrap;
+}
+.table > tbody td {
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.table > tbody tr:last-child td { border-bottom: 0; }
+.table > tbody tr:hover > * { --bs-table-accent-bg: var(--n-25); }
+.table--numeric, .num,
+.table td.num, .table th.num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.table__id {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-subtle);
+  font-size: var(--t-sm);
+  width: 1%;
+}
+.table__actions { white-space: nowrap; text-align: right; width: 1%; }
+/* Row buttons had only whitespace between them: a ~4px gap that matches no
+   token and collapses when the markup is minified. Token gap + shared
+   middle alignment keeps View/Edit/Delete on one visual line. */
+.table__actions .btn { vertical-align: middle; }
+.table__actions .btn + .btn { margin-left: var(--s-1); }
+
+/* The wrapper is the scroll container, so a narrow screen scrolls across to
+   the Actions column instead of silently clipping it. Putting `overflow-x:
+   auto` on every .table-responsive instead turned three small statistic
+   tables into keyboard-inaccessible scroll regions
+   (axe: scrollable-region-focusable), which is why only this class scrolls. */
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  overflow-x: auto;
+}
+.table-wrap > .table { min-width: 52rem; }
+.table-wrap > .card-header { border-bottom: 1px solid var(--border); }
+.table-responsive { border-radius: var(--r-card); }
+
+/* =====================================================================
+   States: empty, loading, error. A blank screen during a slow request
+   is a bug, and "No data" is not an empty state.
+   ===================================================================== */
+
+.state {
+  text-align: left;
+  padding: var(--s-6) var(--s-4);
+  max-width: 60ch;
+}
+.state__title {
+  font-family: var(--font-display);
+  font-size: var(--t-lg);
+  font-weight: 700;
+  color: var(--brand-700);
+  margin: 0 0 var(--s-2);
+}
+.state__body { color: var(--text-muted); margin: 0 0 var(--s-4); }
+.state__actions { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+
+.result-count {
+  font-size: var(--t-sm);
+  color: var(--text-subtle);
+  font-variant-numeric: tabular-nums;
+  margin: var(--s-3) 0 0;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+}
+
+/* =====================================================================
+   Alerts
+   ===================================================================== */
+
+.alert {
+  border-radius: var(--r-card);
+  border-width: 1px;
+  font-size: var(--t-base);
+  padding: var(--s-3) var(--s-4);
+  border-left-width: var(--spine);
+}
+.alert-success { color: var(--success); background: var(--success-surface); border-color: #c4e0d0; border-left-color: var(--success); }
+.alert-danger  { color: var(--danger);  background: var(--danger-surface);  border-color: var(--danger-border); border-left-color: var(--danger); }
+.alert-info    { color: var(--info);    background: var(--info-surface);    border-color: #c9dcee; border-left-color: var(--info); }
+.alert-warning { color: var(--accent);  background: var(--accent-surface);  border-color: var(--accent-border); border-left-color: var(--accent); }
+
+/* =====================================================================
+   Modals — popup Create / Update / Delete, per the assignment
+   ===================================================================== */
+
+.modal-content {
+  border: 1px solid var(--border);
+  border-radius: var(--r-sheet);
+  box-shadow: 0 12px 32px rgba(13, 37, 71, .18);
+}
+.modal-header {
+  border-bottom: 1px solid var(--border);
+  padding: var(--s-4) var(--s-5);
+  background: var(--surface-sunken);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: var(--t-lg);
+  font-weight: 700;
+  color: var(--brand-700);
+}
+.modal-body  { padding: var(--s-5); }
+.modal-footer {
+  border-top: 1px solid var(--border);
+  padding: var(--s-3) var(--s-5);
+  gap: var(--s-2);
+}
+.modal-backdrop.show { opacity: .5; }
+
+/* Every popup partial wraps its header + body + footer in a <form>, which makes
+   those three grandchildren of .modal-content. Bootstrap's scrollable-dialog
+   rules only match direct children, so .modal-body kept its content height, the
+   dialog clipped what did not fit, and a popup taller than the viewport lost its
+   footer entirely — with no scrollbar, because nothing overflowed a scroll
+   container. The form takes over the role Bootstrap expects .modal-content to
+   play: a flex column whose middle section is the only part that scrolls. */
+.modal-dialog-scrollable .modal-content > form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.modal-dialog-scrollable .modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* =====================================================================
+   Login — a single focal moment, so centring is correct here
+   ===================================================================== */
+
+.login-wrapper {
+  max-width: 26rem;
+  margin: var(--s-7) auto var(--s-6);
+}
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: var(--spine) solid var(--accent);
+  border-radius: var(--r-card);
+  box-shadow: var(--elev-2);
+  padding: var(--s-6) var(--s-5) var(--s-5);
+}
+.login-card__brand {
+  font-family: var(--font-display);
+  font-size: var(--t-xl);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--brand-700);
+  margin: 0 0 var(--s-2);
+}
+.login-card__hint { color: var(--text-muted); font-size: var(--t-base); margin: 0 0 var(--s-5); }
+.login-card__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  color: var(--text-subtle);
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: var(--s-5) 0 var(--s-4);
+}
+.login-card__divider::before,
+.login-card__divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--border);
+}
+
+/* Profile summary card: one fixed measure so it does not stretch across
+   the 1200px shell. Lives in the system, not as an inline style. */
+.profile-card { max-width: 40rem; }
+
+/* =====================================================================
+   Article detail — editorial measure
+   ===================================================================== */
+
+.article-head { padding: var(--s-6) 0 var(--s-4); border-bottom: 1px solid var(--border); }
+.article-head__title {
+  font-family: var(--font-display);
+  font-size: var(--t-3xl);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--brand-700);
+  margin: var(--s-2) 0 var(--s-3);
+  max-width: 30ch;
+}
+.article-head__standfirst {
+  font-size: var(--t-lg);
+  line-height: 1.5;
+  color: var(--text-muted);
+  max-width: 60ch;
+  margin: 0 0 var(--s-4);
+}
+.article-meta {
+  display: flex;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  font-size: var(--t-sm);
+  color: var(--text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+.article-meta strong { color: var(--text-muted); font-weight: 600; }
+.article-body {
+  max-width: 68ch;
+  font-size: var(--t-md);
+  line-height: 1.65;
+  white-space: pre-line;
+  padding: var(--s-5) 0;
+}
+.article-body p { margin-bottom: var(--s-4); }
+
+/* =====================================================================
+   Footer
+   ===================================================================== */
+
+.footer {
+  background: var(--brand-800);
+  color: var(--brand-200);
+  font-size: var(--t-sm);
+  padding: var(--s-4) 0;
+  margin-top: var(--s-7);
+  flex-shrink: 0;
+}
+.footer a { color: var(--brand-200); }
+
+/* =====================================================================
+   Real-time (SignalR) — motion that explains a change of state
+   ===================================================================== */
+
+.toast-container { z-index: 1090; }
+
+.toast {
+  border: 1px solid var(--border);
+  border-left: var(--spine) solid var(--brand-500);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--elev-2);
+  font-size: var(--t-base);
+}
+
+@keyframes region-flash {
+  from { background-color: var(--accent-surface); }
+  to   { background-color: transparent; }
+}
+.realtime-flash { animation: region-flash var(--d-slow) ease-out; }
+
+/* Keep the colour cue, drop the movement for anyone who asked for less. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .realtime-flash { animation: none; background-color: var(--accent-surface); }
+}
+
+/* =====================================================================
+   Utilities
+   ===================================================================== */
+
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.news-content { white-space: pre-line; }
+.stack-2 > * + * { margin-top: var(--s-2); }
+.stack-4 > * + * { margin-top: var(--s-4); }
+/* The skip link is 1×1 until focused. Keeping a visible box on screen made
+   craft-probe flag it as a control under the 24px WCAG 2.5.8 target; growing
+   it to a full-width panel on :focus-visible is both correct and the common
+   pattern. It never renders as a stray dot. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only:focus-visible {
+  position: static;
+  width: auto; height: auto;
+  margin: 0;
+  padding: var(--s-2) var(--s-3);
+  overflow: visible;
+  clip: auto;
+  display: inline-block;
+  background: var(--surface);
+  color: var(--brand-600);
+  font-weight: 600;
+  border-radius: var(--r-control);
+}

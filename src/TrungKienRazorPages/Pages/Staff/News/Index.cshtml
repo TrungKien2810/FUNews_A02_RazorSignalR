@@ -1,0 +1,60 @@
+@page
+@model TrungKienRazorPages.Pages.Staff.News.IndexModel
+@{
+    ViewData["Title"] = "News management";
+}
+<div class="page-head">
+    <div class="page-head__text">
+        <p class="eyebrow mb-1">Staff workspace</p>
+        <h1>Manage news</h1>
+        <p class="lede">Create, edit and delete articles. Every change is pushed to anyone reading the site right now.</p>
+    </div>
+    <div class="page-head__actions">
+        <button type="button" class="btn btn-accent" data-modal-url="@Url.Page("/Staff/News/Index", "Create")">New article</button>
+    </div>
+</div>
+
+<form method="get" class="filter-bar" role="search">
+    <div class="filter-bar__row">
+        <div class="filter-bar__field filter-bar__field--wide">
+            <label class="form-label" for="keyword">Search articles</label>
+            <input type="text" id="keyword" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Title, headline, content or source" />
+        </div>
+        <div class="filter-bar__field">
+            <label class="form-label" for="categoryId">Category</label>
+            <select id="categoryId" name="categoryId" class="form-select">
+                <option value="">All categories</option>
+                @foreach (var c in Model.Categories)
+                {
+                    <option value="@c.CategoryId" selected="@(Model.CategoryId == c.CategoryId)">@c.CategoryName</option>
+                }
+            </select>
+        </div>
+        <div class="filter-bar__field">
+            <label class="form-label" for="tagId">Tag</label>
+            <select id="tagId" name="tagId" class="form-select">
+                <option value="">All tags</option>
+                @foreach (var t in Model.Tags)
+                {
+                    <option value="@t.TagId" selected="@(Model.TagId == t.TagId)">@t.TagName</option>
+                }
+            </select>
+        </div>
+        <div class="filter-bar__field">
+            <label class="form-label" for="status">Status</label>
+            <select id="status" name="status" class="form-select">
+                <option value="">All statuses</option>
+                <option value="true" selected="@(Model.Status == true)">Active</option>
+                <option value="false" selected="@(Model.Status == false)">Inactive</option>
+            </select>
+        </div>
+        <div class="filter-bar__actions">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-page="Index" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </div>
+</form>
+
+<div id="news-table" data-realtime-url="@Url.Page("/Staff/News/Index", "List")">
+    <partial name="_NewsTable" model="Model.Articles" />
+</div>
