@@ -5,9 +5,10 @@
    block below. A screen that reaches for a raw hex or a one-off pixel
    value has left the system.
 
-   Light theme only, declared with `color-scheme` so the browser stops
-   painting native controls against a background nobody chose. A second
-   theme that was never designed is worse than one honest theme.
+   Two themes, both declared with `color-scheme` so the browser stops
+   painting native controls against a background nobody chose. The dark
+   theme is a designed second pass over the semantic layer (see below),
+   not an inversion of the light one.
    ===================================================================== */
 
 :root {
@@ -49,6 +50,12 @@
   --text-subtle:    #5d687b;  /* 5.24:1 on --bg — was #6b7688, which axe measured at 4.27:1 */
   --text-on-brand:  #ffffff;
 
+  /* Text-facing aliases of the brand ramp. Screens use these, so the dark theme can lift
+     them without touching the ramp that paints surfaces (app bar, primary buttons). */
+  --link:           var(--brand-500);
+  --link-hover:     var(--brand-600);
+  --heading:        var(--brand-700);
+
   --accent:         #8a5a00;
   --accent-hover:   #6d4700;
   --accent-contrast:#ffffff;
@@ -60,8 +67,10 @@
   --danger-border:  #efc9c6;
   --success:        #1f6f43;
   --success-surface:#eef7f2;
+  --success-border: var(--success-border);
   --info:           #2b5d8a;
   --info-surface:   #eef4fa;
+  --info-border:    var(--info-border);
 
   --focus-ring:     #2b5d8a;
 
@@ -114,6 +123,74 @@
 }
 
 /* =====================================================================
+   Dark theme
+   ---------------------------------------------------------------------
+   A second design pass over the semantic layer, not an inversion: the
+   page goes to a navy-black rather than #000 (pure black makes every
+   elevated surface look like a hole), text is never pure white, the
+   brand hue survives in the app bar, and the amber accent has to move
+   lighter or it disappears on a dark ground.
+
+   Only the semantic tokens change here. Every screen already reads them,
+   so nothing else in this file needs a dark rule.
+   ===================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --bg:             #0f1620;
+    --surface:        #151d28;
+    --surface-sunken: #101822;
+    --border:         #26303c;
+    --border-strong:  #35414f;
+
+    --text:           #e6ebf2;
+    --text-muted:     #b3bfd0;  /* 8.6:1 on --bg */
+    --text-subtle:    #9dabbd;  /* 6.8:1 on --bg */
+
+    --link:           #9db6de;
+    --link-hover:     #c7d8f2;
+    --heading:        #e6ebf2;
+
+    /* The bar lifts off the page instead of merging into it. */
+    --brand-600:      #16345f;
+
+    --accent:         #e3b261;
+    --accent-hover:   #f0c579;
+    --accent-contrast:#1b1204;
+    --accent-surface: #2a2113;
+    --accent-border:  #57431f;
+
+    --danger:         #f28b82;
+    --danger-surface: #2a1618;
+    --danger-border:  #4a2426;
+    --success:        #7fd1a0;
+    --success-surface:#12241a;
+    --success-border: #2c4a38;
+    --info:           #8ab4f8;
+    --info-surface:   #141d2b;
+    --info-border:    #24384f;
+
+    --focus-ring:     #8ab4f8;
+
+    --elev-1: 0 1px 2px rgba(0, 0, 0, .5);
+    --elev-2: 0 2px 8px rgba(0, 0, 0, .55);
+  }
+
+  /* Badges and tag chips are painted from the pale end of the brand ramp — a light-theme
+     convention. On a dark page they need their own surface and ink. `html` in front of
+     each selector so these beat the base rules further down the file, which come later
+     in source order and would otherwise win on equal specificity. */
+  html .badge-role--staff,
+  html .tag {
+    background: #1a2a3f;
+    border-color: #2a4a72;
+    color: #cfe0f7;
+  }
+}
+
+/* =====================================================================
    Base
    ===================================================================== */
 
@@ -142,7 +219,7 @@ main { flex: 1 0 auto; }
 h1, h2, h3 {
   font-family: var(--font-display);
   font-weight: 700;
-  color: var(--brand-700);
+  color: var(--heading);
   line-height: 1.15;
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -172,8 +249,8 @@ h3 { font-size: var(--t-lg); }
 .text-subtle { color: var(--text-subtle) !important; }
 .small, small { font-size: var(--t-sm); }
 
-a { color: var(--brand-500); }
-a:hover { color: var(--brand-600); }
+a { color: var(--link); }
+a:hover { color: var(--link-hover); }
 
 /* Bootstrap paints the active breadcrumb crumb #6c757d on --bg, which axe
    measures at 4.36:1. Use the token ramp instead. */
@@ -463,14 +540,14 @@ hr {
 
 .btn-outline-primary,
 .btn-outline-primary:focus {
-  color: var(--brand-500);
+  color: var(--link);
   background-color: transparent;
   border-color: var(--border-strong);
 }
 .btn-outline-primary:hover,
 .btn-outline-primary:active,
 .btn-outline-primary.active {
-  color: var(--brand-600);
+  color: var(--link-hover);
   background-color: var(--brand-100);
   border-color: var(--brand-400);
 }
@@ -551,11 +628,11 @@ hr {
 }
 
 .btn-link {
-  color: var(--brand-500);
+  color: var(--link);
   font-weight: 600;
   text-decoration: none;
 }
-.btn-link:hover { color: var(--brand-600); text-decoration: underline; }
+.btn-link:hover { color: var(--link-hover); text-decoration: underline; }
 
 /* =====================================================================
    Forms
@@ -674,7 +751,7 @@ hr {
   border-radius: var(--r-card);
   padding: var(--s-4);
 }
-.stat--total  { border-left-color: var(--brand-500); }
+.stat--total  { border-left-color: var(--link); }
 .stat--active { border-left-color: var(--success); }
 .stat--inactive { border-left-color: var(--n-400); }
 .stat__label {
@@ -691,7 +768,7 @@ hr {
   font-size: var(--t-xl);
   font-weight: 700;
   line-height: 1.1;
-  color: var(--brand-700);
+  color: var(--heading);
   font-variant-numeric: tabular-nums;
 }
 
@@ -767,7 +844,7 @@ hr {
   font-weight: 700;
   line-height: 1.12;
   letter-spacing: -0.02em;
-  color: var(--brand-700);
+  color: var(--heading);
   margin: var(--s-2) 0 var(--s-3);
   max-width: 34ch; /* a lead headline is read, so keep the measure short */
 }
@@ -788,7 +865,7 @@ hr {
 }
 .lead-story__cue {
   font-weight: 600;
-  color: var(--brand-500);
+  color: var(--link);
   font-size: var(--t-base);
 }
 .lead-story:hover .lead-story__cue { color: var(--accent); }
@@ -819,7 +896,7 @@ hr {
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.01em;
-  color: var(--brand-700);
+  color: var(--heading);
   margin: 0 0 var(--s-1);
 }
 .story-list__headline {
@@ -838,7 +915,7 @@ hr {
 .story-list__cat {
   display: block;
   font-weight: 600;
-  color: var(--brand-500);
+  color: var(--link);
   letter-spacing: 0.02em;
 }
 
@@ -858,7 +935,7 @@ hr {
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--brand-600);
+  color: var(--link-hover);
   background: var(--brand-100);
   border: 1px solid var(--brand-200);
   border-radius: var(--r-pill);
@@ -874,10 +951,10 @@ hr {
   border-radius: var(--r-pill);
   border: 1px solid transparent;
 }
-.badge-role--staff    { color: var(--brand-600); background: var(--brand-100); border-color: var(--brand-200); }
+.badge-role--staff    { color: var(--link-hover); background: var(--brand-100); border-color: var(--brand-200); }
 .badge-role--lecturer { color: var(--accent); background: var(--accent-surface); border-color: var(--accent-border); }
-.badge-status--live   { color: var(--success); background: var(--success-surface); border-color: #c4e0d0; }
-.badge-status--published { color: var(--success); background: var(--success-surface); border-color: #c4e0d0; }
+.badge-status--live   { color: var(--success); background: var(--success-surface); border-color: var(--success-border); }
+.badge-status--published { color: var(--success); background: var(--success-surface); border-color: var(--success-border); }
 .badge-status--draft  { color: var(--text-muted); background: var(--surface-sunken); border-color: var(--border-strong); }
 
 /* =====================================================================
@@ -1034,7 +1111,7 @@ hr {
   font-family: var(--font-display);
   font-size: var(--t-lg);
   font-weight: 700;
-  color: var(--brand-700);
+  color: var(--heading);
   margin: 0 0 var(--s-2);
 }
 .state__body { color: var(--text-muted); margin: 0 0 var(--s-4); }
@@ -1060,9 +1137,9 @@ hr {
   padding: var(--s-3) var(--s-4);
   border-left-width: var(--spine);
 }
-.alert-success { color: var(--success); background: var(--success-surface); border-color: #c4e0d0; border-left-color: var(--success); }
+.alert-success { color: var(--success); background: var(--success-surface); border-color: var(--success-border); border-left-color: var(--success); }
 .alert-danger  { color: var(--danger);  background: var(--danger-surface);  border-color: var(--danger-border); border-left-color: var(--danger); }
-.alert-info    { color: var(--info);    background: var(--info-surface);    border-color: #c9dcee; border-left-color: var(--info); }
+.alert-info    { color: var(--info);    background: var(--info-surface);    border-color: var(--info-border); border-left-color: var(--info); }
 .alert-warning { color: var(--accent);  background: var(--accent-surface);  border-color: var(--accent-border); border-left-color: var(--accent); }
 
 /* =====================================================================
@@ -1084,7 +1161,7 @@ hr {
   font-family: var(--font-display);
   font-size: var(--t-lg);
   font-weight: 700;
-  color: var(--brand-700);
+  color: var(--heading);
 }
 .modal-body  { padding: var(--s-5); }
 .modal-footer {
@@ -1135,7 +1212,7 @@ hr {
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
-  color: var(--brand-700);
+  color: var(--heading);
   margin: 0 0 var(--s-2);
 }
 .login-card__hint { color: var(--text-muted); font-size: var(--t-base); margin: 0 0 var(--s-5); }
@@ -1180,7 +1257,7 @@ hr {
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.03em;
-  color: var(--brand-700);
+  color: var(--heading);
   margin: var(--s-2) 0 var(--s-3);
   max-width: 30ch;
 }
@@ -1292,7 +1369,7 @@ hr {
   clip: auto;
   display: inline-block;
   background: var(--surface);
-  color: var(--brand-600);
+  color: var(--link-hover);
   font-weight: 600;
   border-radius: var(--r-control);
 }
@@ -1305,7 +1382,7 @@ a.tag {
 a.tag:hover,
 a.tag:focus-visible {
   border-color: var(--brand-400);
-  color: var(--brand-700);
+  color: var(--heading);
 }
 
 /* =====================================================================
