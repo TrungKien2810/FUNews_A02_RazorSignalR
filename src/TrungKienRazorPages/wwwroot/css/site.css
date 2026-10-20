@@ -827,6 +827,9 @@ hr {
   padding: var(--s-3) var(--s-4);
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
+  /* An address or a long title is one unbreakable word: without this it pushes the
+     cell — and on a phone the whole page — wider than the screen. */
+  overflow-wrap: anywhere;
 }
 .table > tbody tr:last-child td { border-bottom: 0; }
 .table > tbody tr:hover > * { --bs-table-accent-bg: var(--n-25); }
