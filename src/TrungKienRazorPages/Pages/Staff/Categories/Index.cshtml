@@ -75,12 +75,12 @@ else
                 @foreach (var c in Model.Categories)
                 {
                     <tr>
-                        <td class="table__id">@c.CategoryId</td>
-                        <td class="fw-semibold">@c.CategoryName</td>
-                        <td><span class="text-truncate-2">@c.CategoryDesciption</span></td>
-                        <td>@(c.ParentCategoryId == c.CategoryId ? "—" : c.ParentCategory?.CategoryName ?? "—")</td>
-                        <td><partial name="_StatusBadge" model="c.IsActive" /></td>
-                        <td class="table__actions">
+                        <td class="table__id" data-label="ID">@c.CategoryId</td>
+                        <td class="fw-semibold" data-label="Name">@c.CategoryName</td>
+                        <td data-label="Description"><span class="text-truncate-2">@c.CategoryDesciption</span></td>
+                        <td data-label="Parent">@(c.ParentCategoryId == c.CategoryId ? "—" : c.ParentCategory?.CategoryName ?? "—")</td>
+                        <td data-label="Status"><partial name="_StatusBadge" model="c.IsActive" /></td>
+                        <td class="table__actions" data-label="Actions">
                             <button type="button" class="btn btn-sm btn-outline-primary" data-modal-url="@Url.Page("Index", "Edit", new { id = c.CategoryId })">
                                 Edit<span class="sr-only"> @c.CategoryName</span>
                             </button>

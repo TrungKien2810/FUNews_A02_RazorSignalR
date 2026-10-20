@@ -74,16 +74,16 @@ else
                 @foreach (var a in Model.Accounts)
                 {
                     <tr>
-                        <td class="table__id">@a.AccountId</td>
-                        <td>@a.AccountName</td>
-                        <td>@a.AccountEmail</td>
-                        <td>
+                        <td class="table__id" data-label="ID">@a.AccountId</td>
+                        <td data-label="Name">@a.AccountName</td>
+                        <td data-label="Email">@a.AccountEmail</td>
+                        <td data-label="Role">
                             @{
                                 var roleClass = a.AccountRole == AccountRoles.Staff ? "badge-role--staff" : "badge-role--lecturer";
                             }
                             <span class="badge @roleClass">@AccountRoles.GetRoleName(a.AccountRole)</span>
                         </td>
-                        <td class="table__actions">
+                        <td class="table__actions" data-label="Actions">
                             <button type="button" class="btn btn-sm btn-outline-primary" data-modal-url="@Url.Page("Index", "Edit", new { id = a.AccountId })">
                                 Edit<span class="sr-only"> @a.AccountName</span>
                             </button>
