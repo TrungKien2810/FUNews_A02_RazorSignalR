@@ -46,6 +46,14 @@ for example `Server=tcp:127.0.0.1,1433;Database=FUNewsManagement;User Id=sa;Pass
 | Staff (role 1) | IsabellaDavid@FUNewsManagement.org | @1 |
 | Lecturer (role 2) | EmmaWilliam@FUNewsManagement.org | @1 |
 
+**Why any Staff account can edit any article.** The requirement gives Staff
+"Manage news article (includes tags)" with Read / Create / Update / Delete / Search, and ties
+authorship only to a separate feature: "View news history created by him/her" (`/Staff/News/History`,
+which does filter by the signed-in author). Management is therefore not scoped per author, and the
+provided seed data assumes the same thing — all five seeded articles are written by Lecturer
+accounts, so scoping management to "own articles" would leave a Staff login with nothing it may
+edit.
+
 ## UI design system
 
 All presentation lives in `src/TrungKienRazorPages/wwwroot/css/site.css`, in three layers:
