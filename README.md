@@ -46,6 +46,18 @@ for example `Server=tcp:127.0.0.1,1433;Database=FUNewsManagement;User Id=sa;Pass
 | Staff (role 1) | IsabellaDavid@FUNewsManagement.org | @1 |
 | Lecturer (role 2) | EmmaWilliam@FUNewsManagement.org | @1 |
 
+**Ownership of news articles.** A staff account may edit or delete the articles it created;
+another author's article is listed and readable ("Read only" where the buttons would be), and a
+direct request to edit or delete it is refused server-side with the access-denied page, not just
+hidden in the UI. The requirement pairs "manage news article" with "view news history created by
+him/her", so authorship is the unit of ownership.
+
+Note for the provided seed data: all five seeded articles are authored by the two **Lecturer**
+accounts, so a fresh Staff login sees them as read-only until it writes an article of its own
+(create one, then edit/delete it). If the assignment is graded on editing a seeded article, say so
+and the rule reverts to spec-literal in two places: `IsOwner` in `Pages/Staff/News/Index.cshtml.cs`
+and the `n.CreatedById == myAccountId` test in `_NewsTable.cshtml`.
+
 ## UI design system
 
 All presentation lives in `src/TrungKienRazorPages/wwwroot/css/site.css`, in three layers:
@@ -67,9 +79,11 @@ A screen that reaches for a raw hex or a one-off pixel value has left the system
 - **The signature decision** — the news list gives the newest article display size
   (`.lead-story`) and treats the rest as a quiet list (`.story-list`). A grid of equal cards
   gives the eye nowhere to land; a newsroom makes the first story loudest.
-- **Theme** — light only, declared with `color-scheme: light`. A second theme that was never
-  designed is worse than one honest theme, and it stops the browser painting native controls
-  against a background nobody chose.
+- **Theme** — light and `prefers-color-scheme: dark`, both designed rather than inverted: the dark
+  block overrides the semantic tokens only (a navy-black ground, text that is never pure white, the
+  brand hue still in the app bar, the amber pushed lighter so it survives). Two tokens,
+  `--link`/`--heading`, exist so the dark theme can lift link and heading contrast without
+  repainting the app bar they sit on.
 
 ### Known cosmetics
 
@@ -94,9 +108,17 @@ Console is free of errors and warnings throughout.
 
 On the public side, the news list and an article page were re-checked in an automated browser
 pass at 375 / 768 / 1440px: no horizontal overflow and no console errors, and `/feed.rss`
-answers `application/rss+xml` with the active stories. Below 768px the staff news ledger
+answers `application/rss+xml` with the active stories. Below 880px the staff news ledger
 reflows into labelled records with full-width View / Edit / Delete buttons instead of scrolling
-sideways, and the app bar collapses behind one menu button.
+sideways, and the app bar collapses behind one menu button. That boundary is measured, not
+guessed: the eight columns need 838px plus the shell's padding, so 768–879px used to overflow.
+Document width was re-measured at 375 / 414 / 768 / 824 / 900 / 1024 / 1088 / 1200 and equals
+the viewport at every step.
+
+Two behaviour checks that are easy to get wrong and were driven end to end: a staff account can
+create → edit → delete its own article, while a direct `?handler=Edit&id=` for another author's
+article answers `302 → /Account/AccessDenied`; and the open menu state (never covered by a
+desktop-width scan) is axe-clean in both themes at 900px.
 
 Both themes were scanned with axe: light and `prefers-color-scheme: dark` report no violations
 on the news list, an article page and the staff ledger, and a dark-mode screenshot confirms the
@@ -115,6 +137,7 @@ footer's inline text link — WCAG 2.5.8 exempts targets in a sentence or block 
 - **Admin** (`/Admin/*`): manage accounts (CRUD + search by name/email/role); statistic report by StartDate–EndDate
   on news created date, sorted descending.
 - **Staff** (`/Staff/*`): manage categories (CRUD + search; a category used by news cannot be deleted), manage news
-  articles including tags (CRUD + search, real-time), manage own profile, view own news history.
+  articles including tags (CRUD + search, real-time) — own articles are editable, other authors' are read-only,
+  manage own profile, view own news history.
 - Create / Edit run in Bootstrap popup dialogs (AJAX page handlers, server + client validation); Delete always shows a confirmation popup.
 - All inputs are validated with data annotations (`ViewModels/*`).

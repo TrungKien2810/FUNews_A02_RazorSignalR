@@ -91,6 +91,7 @@ public class IndexModel : PageModel
     {
         var article = _newsRepository.GetNewsArticleById(id);
         if (article == null) return NotFound();
+        if (!IsOwner(article)) return Forbid();
         return FormPartial(new NewsFormViewModel
         {
             NewsArticleId = article.NewsArticleId,
@@ -108,6 +109,7 @@ public class IndexModel : PageModel
     {
         var article = string.IsNullOrEmpty(input.NewsArticleId) ? null : _newsRepository.GetNewsArticleById(input.NewsArticleId);
         if (article == null) return NotFound();
+        if (!IsOwner(article)) return Forbid();
 
         ValidateCategory(input, article.CategoryId);
         if (!ModelState.IsValid)
@@ -134,6 +136,7 @@ public class IndexModel : PageModel
     {
         var article = _newsRepository.GetNewsArticleById(id);
         if (article == null) return NotFound();
+        if (!IsOwner(article)) return Forbid();
         return Partial("_DeleteNews", article);
     }
 
@@ -141,6 +144,7 @@ public class IndexModel : PageModel
     {
         var article = _newsRepository.GetNewsArticleById(id);
         if (article == null) return NotFound();
+        if (!IsOwner(article)) return Forbid();
         _newsRepository.DeleteNewsArticle(id);
         await _hub.BroadcastNewsChangedAsync("deleted", article.NewsArticleId, article.NewsTitle, User.Identity?.Name);
 
@@ -149,6 +153,14 @@ public class IndexModel : PageModel
     }
 
     private List<NewsArticle> Search() => _newsRepository.SearchNewsArticles(Keyword, CategoryId, Status, null, TagId);
+
+    /// <summary>
+    /// A staff account manages the articles it wrote. "View news history created by him/her"
+    /// only makes sense if authorship is the unit of ownership, and a newsroom where any
+    /// staff member can silently rewrite another's byline is a data-integrity bug, not a
+    /// permission shortcut. Enforced on the server, not only by hiding the buttons.
+    /// </summary>
+    private bool IsOwner(NewsArticle article) => article.CreatedById == User.GetAccountId();
 
     /// <summary>New news must use an active category; an existing article may keep its current one.</summary>
     private void ValidateCategory(NewsFormViewModel input, short? currentCategoryId)

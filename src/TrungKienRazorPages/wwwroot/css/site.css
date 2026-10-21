@@ -43,6 +43,11 @@
   --bg:             var(--n-50);
   --surface:        var(--n-0);
   --surface-sunken: var(--n-100);
+  /* Row hover is its own token: an interactive surface, not a neutral swatch.
+     Reusing --n-25 here painted a near-white block over a dark row and left the
+     text unreadable, because Bootstrap applies the accent through an inset shadow
+     rather than as a background we could see in a dark rule. */
+  --row-hover:      var(--n-25);
   --border:         var(--n-200);
   --border-strong:  var(--n-300);
   --text:           #1b2129;
@@ -142,6 +147,7 @@
     --bg:             #0f1620;
     --surface:        #151d28;
     --surface-sunken: #101822;
+    --row-hover:      #1d2938;
     --border:         #26303c;
     --border-strong:  #35414f;
 
@@ -339,13 +345,29 @@ hr {
   gap: var(--s-2);
   margin-left: auto;
   padding: var(--s-2) var(--s-3);
-  border: 1px solid rgb(255 255 255 / 0.45);
+  min-height: 40px;
+  border: 1px solid rgb(255 255 255 / 0.38);
   border-radius: var(--r-control);
-  background: transparent;
+  background: rgb(255 255 255 / 0.06);
   color: var(--text-on-brand);
   font-size: var(--t-sm);
   font-weight: 600;
+  line-height: 1.2;
   cursor: pointer;
+  transition: background-color var(--d-fast) ease-out,
+              border-color var(--d-fast) ease-out;
+}
+
+/* A pressed toggle that looks pressed, and a hover that lifts the control off the
+   bar without turning it into a white block. */
+.nav-toggle:hover {
+  background: rgb(255 255 255 / 0.14);
+  border-color: rgb(255 255 255 / 0.6);
+}
+
+.nav-toggle[aria-expanded="true"] {
+  background: rgb(255 255 255 / 0.18);
+  border-color: rgb(255 255 255 / 0.78);
 }
 
 .nav-toggle__bars {
@@ -358,6 +380,14 @@ hr {
 @media (max-width: 61.99rem) {
   html.js .nav-toggle {
     display: inline-flex;
+  }
+
+  /* The button and the actions both carried `margin-left: auto`, so the free space
+     was split between them and the button hovered in the middle of the bar on its
+     own. One auto margin, on the button, keeps it and the actions as one right-hand
+     group at every width. */
+  html.js .app-bar__actions {
+    margin-left: var(--s-3);
   }
 
   html.js .app-nav {
@@ -886,7 +916,7 @@ hr {
               border-left-color var(--d-fast) ease-out;
 }
 .story-list__item:hover {
-  background: var(--n-25);
+  background: var(--row-hover);
   border-left-color: var(--accent);
   color: inherit;
 }
@@ -987,7 +1017,7 @@ hr {
   overflow-wrap: anywhere;
 }
 .table > tbody tr:last-child td { border-bottom: 0; }
-.table > tbody tr:hover > * { --bs-table-accent-bg: var(--n-25); }
+.table > tbody tr:hover > * { --bs-table-accent-bg: var(--row-hover); }
 .table--numeric, .num,
 .table td.num, .table th.num {
   font-variant-numeric: tabular-nums;
@@ -1006,6 +1036,17 @@ hr {
 .table__actions .btn { vertical-align: middle; }
 .table__actions .btn + .btn { margin-left: var(--s-1); }
 
+/* Articles written by someone else stay readable but not editable. The label sits
+   where the two buttons would be, so the column does not collapse on those rows. */
+.table__readonly {
+  display: inline-block;
+  margin-left: var(--s-2);
+  padding: 0 var(--s-1);
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 /* The wrapper is the scroll container, so a narrow screen scrolls across to
    the Actions column instead of silently clipping it. Putting `overflow-x:
    auto` on every .table-responsive instead turned three small statistic
@@ -1017,15 +1058,15 @@ hr {
   border-radius: var(--r-card);
   overflow-x: auto;
 }
-.table-wrap > .table { min-width: 52rem; }
+.table-wrap > .table { min-width: 45rem; }
 .table-wrap > .card-header { border-bottom: 1px solid var(--border); }
 .table-responsive { border-radius: var(--r-card); }
 
-/* Below 768px the ledger becomes a stack of records rather than a sideways
-   scroll: a scroll region hides the Actions column off-screen and clips tag
-   chips mid-word, and the person on a phone needs "Edit this article" more
-   than they need aligned columns. Each cell carries its own label. */
-@media (max-width: 767.98px) {
+/* The old boundary was 767.98px while the eight columns need 838px of content plus
+   the shell's padding: the band just above 768px had a table wider than its container,
+   so it scrolled sideways with the first column cut off. Below 880px the table cannot
+   fit at any width, so each row becomes a stack of labelled records instead. */
+@media (max-width: 54.99rem) {
   .table-wrap { overflow-x: visible; }
   .table-wrap > .table { min-width: 0; }
 
@@ -1084,6 +1125,10 @@ hr {
   .table td.table__actions::before { content: none; }
 
   .table td.table__actions .btn { flex: 1 1 auto; }
+
+  /* Someone else's article has one button and a "Read only" label, so the shared
+     grow rule would stretch that single button across the whole row. */
+  .table td.table__actions:has(.table__readonly) .btn { flex: 0 0 auto; }
 
   /* Title and its standfirst stack in the value column instead of sitting side by side. */
   .table td.table__title {

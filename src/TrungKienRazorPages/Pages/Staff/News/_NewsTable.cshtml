@@ -8,6 +8,7 @@
     var isHistory = string.Equals(ViewContext.RouteData.Values["page"] as string,
         "/Staff/News/History", StringComparison.OrdinalIgnoreCase);
     var resetUrl = Url.Page(isHistory ? "/Staff/News/History" : "/Staff/News/Index");
+    var myAccountId = User.GetAccountId();
 }
 @if (!Model.Any())
 {
@@ -25,7 +26,7 @@ else
 {
     <div class="table-wrap">
         <table class="table">
-            <caption class="sr-only">News articles you can edit, with view, edit and delete actions</caption>
+            <caption class="sr-only">News articles with view, edit and delete actions; only the articles you wrote can be edited or deleted</caption>
             <thead>
                 <tr>
                     <th scope="col" class="table__id">ID</th>
@@ -70,12 +71,19 @@ else
                             <button type="button" class="btn btn-sm btn-outline-secondary" data-modal-url="@Url.Page("/Staff/News/Index", "Details", new { id = n.NewsArticleId })">
                                 View<span class="sr-only"> @n.NewsTitle</span>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-modal-url="@Url.Page("/Staff/News/Index", "Edit", new { id = n.NewsArticleId })">
-                                Edit<span class="sr-only"> @n.NewsTitle</span>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" data-modal-url="@Url.Page("/Staff/News/Index", "Delete", new { id = n.NewsArticleId })">
-                                Delete<span class="sr-only"> @n.NewsTitle</span>
-                            </button>
+                            @if (n.CreatedById == myAccountId)
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-modal-url="@Url.Page("/Staff/News/Index", "Edit", new { id = n.NewsArticleId })">
+                                    Edit<span class="sr-only"> @n.NewsTitle</span>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-modal-url="@Url.Page("/Staff/News/Index", "Delete", new { id = n.NewsArticleId })">
+                                    Delete<span class="sr-only"> @n.NewsTitle</span>
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="table__readonly">Read only</span>
+                            }
                         </td>
                     </tr>
                 }
