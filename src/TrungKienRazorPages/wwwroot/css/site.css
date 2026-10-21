@@ -824,6 +824,11 @@ hr {
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
+
+/* `overflow-wrap: anywhere` on every cell would shrink each column to its narrowest
+   word and break titles mid-word ("New / Rese / arch"). It is only worth it where the
+   content really is one long unbroken token: an e-mail address. */
+.table__email { overflow-wrap: anywhere; }
 .table > tbody tr:last-child td { border-bottom: 0; }
 .table > tbody tr:hover > * { --bs-table-accent-bg: var(--n-25); }
 .table--numeric, .num,
@@ -854,6 +859,11 @@ hr {
   border: 1px solid var(--border);
   border-radius: var(--r-card);
   overflow-x: auto;
+  /* Without this, Chrome propagates the layout overflow of a table wider than its
+     scroll container to the root scroller: the wrapper clipped correctly, but the
+     page itself still scrolled sideways and the first column was cut off. Layout
+     containment keeps that overflow inside the wrapper, where it belongs. */
+  contain: layout;
 }
 .table-wrap > .table { min-width: 52rem; }
 .table-wrap > .card-header { border-bottom: 1px solid var(--border); }
